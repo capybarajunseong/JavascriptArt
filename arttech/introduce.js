@@ -51,6 +51,6 @@ function draw() {
 
     // 3초 후 first.html로 이동
     if (millis() - startTime > 3000) {
-        window.location.href = 'first.html';
+        window.location.href = 'arttech/first.html';
     }
 }
