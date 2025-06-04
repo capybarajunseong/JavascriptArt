@@ -27,6 +27,14 @@ let enlargeProgress = 0;
 let enlargeDuration = 60; // 프레임 단위로 애니메이션 지속 시간
 let isAllMarblesStopped = false; // 모든 구슬이 멈췄는지 확인
 
+// 배경 이미지 변수 추가
+let backgroundImage;
+
+// 이미지를 미리 로드하는 함수
+function preload() {
+  backgroundImage = loadImage('../image/firstbackground.png'); // 이미지 파일 경로 업데이트
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
@@ -41,9 +49,9 @@ function setup() {
     let spacing = windowWidth * 0.07;
     let x = slopeEnd.x - (maxMarbles - 1 - i) * spacing;
     let y = floorY - 20;
-    slots.push({ 
-      x, 
-      y, 
+    slots.push({
+      x,
+      y,
       filled: false,
       stackHeight: 0,
       marbles: []
@@ -68,10 +76,13 @@ function setup() {
 }
 
 function draw() {
-  background(245);
-  
-  // 배경 그라데이션
-  drawBackground();
+  // 배경 이미지 그리기 (캔버스 크기에 맞게)
+  if (backgroundImage) {
+    image(backgroundImage, 0, 0, width, height);
+  } else {
+    // 이미지가 로드되지 않았을 경우 대체 배경 (이전 그라데이션 또는 단색)
+    background(245);
+  }
 
   // 대각선 발판 그리기
   drawSlope();
@@ -137,122 +148,8 @@ function draw() {
       lastSpawnTime = millis();
     }
   }
-
-  // 모든 구슬이 멈췄고 확대 애니메이션이 완료되면 문구 표시
-  if (isAllMarblesStopped && !isEnlarging) {
-    textAlign(CENTER, CENTER);
-    textSize(24);
-    fill(0);
-    text("문 손잡이를 눌러 문을 열어주세요", width/2, height/2 + 150);
-  }
 }
 
-function drawFace() {
-  // 얼굴 본체
-  fill(skinColor);
-  noStroke();
-  ellipse(faceX, faceY, 200, 250);
-}
-
-function drawHair() {
-  // 머리카락
-  fill(hairColor);
-  noStroke();
-  
-  // 머리카락 본체
-  beginShape();
-  vertex(faceX - 100, faceY - 125);
-  vertex(faceX + 100, faceY - 125);
-  vertex(faceX + 120, faceY - 50);
-  vertex(faceX + 110, faceY + 50);
-  vertex(faceX + 90, faceY + 100);
-  vertex(faceX + 50, faceY + 125);
-  vertex(faceX - 50, faceY + 125);
-  vertex(faceX - 90, faceY + 100);
-  vertex(faceX - 110, faceY + 50);
-  vertex(faceX - 120, faceY - 50);
-  endShape(CLOSE);
-  
-  // 앞머리
-  beginShape();
-  vertex(faceX - 80, faceY - 125);
-  vertex(faceX + 80, faceY - 125);
-  vertex(faceX + 60, faceY - 75);
-  vertex(faceX + 40, faceY - 50);
-  vertex(faceX, faceY - 40);
-  vertex(faceX - 40, faceY - 50);
-  vertex(faceX - 60, faceY - 75);
-  endShape(CLOSE);
-}
-
-function drawEyes() {
-  // 왼쪽 눈
-  fill(255);
-  ellipse(faceX - 40, faceY - 20, 40, 25);
-  
-  // 오른쪽 눈
-  ellipse(faceX + 40, faceY - 20, 40, 25);
-  
-  // 왼쪽 눈동자
-  fill(eyeColor);
-  ellipse(faceX - 40, faceY - 20, 20, 20);
-  
-  // 오른쪽 눈동자
-  ellipse(faceX + 40, faceY - 20, 20, 20);
-  
-  // 왼쪽 눈 하이라이트
-  fill(255);
-  ellipse(faceX - 45, faceY - 25, 10, 10);
-  
-  // 오른쪽 눈 하이라이트
-  ellipse(faceX + 35, faceY - 25, 10, 10);
-}
-
-function drawNose() {
-  // 코
-  stroke(0);
-  strokeWeight(2);
-  noFill();
-  beginShape();
-  vertex(faceX, faceY - 10);
-  vertex(faceX, faceY + 20);
-  endShape();
-  
-  // 콧볼
-  noStroke();
-  fill(255, 200, 200);
-  ellipse(faceX - 5, faceY + 20, 10, 5);
-  ellipse(faceX + 5, faceY + 20, 10, 5);
-}
-
-function drawMouth() {
-  // 입
-  noFill();
-  stroke(0);
-  strokeWeight(2);
-  arc(faceX, faceY + 40, 60, 30, 0, PI);
-}
-
-function drawEyebrows() {
-  // 왼쪽 눈썹
-  noFill();
-  stroke(0);
-  strokeWeight(2);
-  arc(faceX - 40, faceY - 40, 40, 20, PI, 0);
-  
-  // 오른쪽 눈썹
-  arc(faceX + 40, faceY - 40, 40, 20, PI, 0);
-}
-
-function drawBackground() {
-  // 배경 그라데이션
-  for (let y = 0; y < height; y++) {
-    let inter = map(y, 0, height, 0, 1);
-    let c = lerpColor(color(255, 255, 255), color(240, 240, 245), inter);
-    stroke(c);
-    line(0, y, width, y);
-  }
-}
 
 function drawSlope() {
   // 대각선 발판 그림자

@@ -15,6 +15,14 @@ let isDraggingMode = true; // 드래그 모드인지 문지르기 모드인지 �
 let originalPositions = []; // 구슬들의 원래 위치 저장
 let colorOrder = []; // 색상 순서 저장
 
+// 배경 이미지 변수 추가
+let backgroundImage;
+
+// 이미지를 미리 로드하는 함수
+function preload() {
+  backgroundImage = loadImage('../image/touchbg.png'); // 이미지 파일 경로 설정
+}
+
 // 구슬 클래스
 class Marble {
     constructor(x, y) {
@@ -158,7 +166,13 @@ function setup() {
 }
 
 function draw() {
-    background(240);
+    // 배경 이미지 그리기 (캔버스 크기에 맞게)
+    if (backgroundImage) {
+      image(backgroundImage, 0, 0, width, height);
+    } else {
+      // 이미지가 로드되지 않았을 경우 대체 배경
+      background(240); // 이전 배경색 또는 다른 색상
+    }
     
     handX = mouseX;
     handY = mouseY;
