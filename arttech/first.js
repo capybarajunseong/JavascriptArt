@@ -39,9 +39,9 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
 
-  // 대각선 발판 설정 (화면 크기에 맞게 조정)
-  slopeStart = createVector(windowWidth * 0.1, windowHeight * 0.2);
-  slopeEnd = createVector(windowWidth * 0.7, windowHeight * 0.8);
+  // 대각선 발판 설정 (고정된 픽셀 좌표)
+  slopeStart = createVector(900, 375); // Moved start point further left
+  slopeEnd = createVector(1220, 470); // Fixed end point
   floorY = slopeEnd.y + 20;
 
   // 슬롯 좌표 미리 계산 (화면 크기에 맞게 조정)
@@ -86,9 +86,6 @@ function draw() {
 
   // 대각선 발판 그리기
   drawSlope();
-
-  // 바구니 그리기
-  drawBasket();
 
   // 구슬 그리기
   for (let marble of marbles) {
@@ -136,6 +133,9 @@ function draw() {
     drawMarble(marble);
   }
 
+  // 바구니 그리기 (구슬 뒤로) - REMOVED
+  // drawBasket();
+
   // 확대된 구슬 그리기
   if (isEnlarging && enlargedMarble) {
     drawEnlargedMarble();
@@ -152,26 +152,39 @@ function draw() {
 
 
 function drawSlope() {
-  // 대각선 발판 그림자
-  stroke(160);
-  strokeWeight(12);
-  line(slopeStart.x, slopeStart.y, slopeEnd.x, slopeEnd.y);
-  
-  // 대각선 발판 본체
-  stroke(180);
-  strokeWeight(8);
-  line(slopeStart.x, slopeStart.y, slopeEnd.x, slopeEnd.y);
-  
-  // 발판 하이라이트
-  stroke(200);
-  strokeWeight(4);
-  line(slopeStart.x, slopeStart.y, slopeEnd.x, slopeEnd.y);
+  // 파스텔 핑크 기본 색상 (RGB)
+  let basePink = color(255, 182, 193);
+  // 그림자 색상 (더 어둡게)
+  let shadowPink = color(220, 150, 160);
+  // 하이라이트 색상 (더 밝게)
+  let highlightPink = color(255, 200, 210);
+
+  let slopeThickness = 15; // 발판 두께 설정
+
+  // 발판 본체 (면으로 그리기)
+  noStroke();
+  fill(basePink);
+  quad(
+    slopeStart.x, slopeStart.y,
+    slopeEnd.x, slopeEnd.y,
+    slopeEnd.x, slopeEnd.y + slopeThickness,
+    slopeStart.x, slopeStart.y + slopeThickness
+  );
+
+  // 발판 하이라이트 (위쪽 면)
+  fill(highlightPink);
+  quad(
+    slopeStart.x, slopeStart.y,
+    slopeStart.x - slopeThickness * (slopeEnd.x - slopeStart.x) / (slopeStart.y - slopeEnd.y), slopeStart.y + slopeThickness,
+    slopeEnd.x, slopeEnd.y + slopeThickness,
+    slopeEnd.x, slopeEnd.y
+  );
 }
 
 function drawBasket() {
-  // 바구니 크기를 화면 크기에 맞게 조정
-  let basketWidth = windowWidth * 0.4;
-  let basketHeight = windowHeight * 0.2;
+  // 바구니 크기를 화면 크기에 맞게 조정 (왼쪽으로 확장, 높이 감소)
+  let basketWidth = windowWidth * 0.8; // Further increased width
+  let basketHeight = windowHeight * 0.1; // Decreased height
   
   // 바구니 배경
   noStroke();
@@ -260,10 +273,32 @@ function drawEnlargedMarble() {
   
   // 애니메이션이 완료되면 텍스트 표시
   if (enlargeProgress >= enlargeDuration) {
+    if (enlargeProgress >= enlargeDuration) {
+    
+    // 빛나는 효과 그리기
+    push();
+    // 빛의 중심을 확대된 구슬의 중심과 일치시킵니다.
+    translate(targetX, targetY);
+    
+    // 구슬 색상 기반으로 빛나는 색상 설정
+    let glowColor = color(enlargedMarble.color);
+    glowColor.setAlpha(50); // 초기 투명도 설정 (0-255)
+    
+    noStroke();
+    // 여러 개의 원을 겹쳐 그려 빛나는 효과 생성
+    for (let i = 0; i < 10; i++) { // 10개의 원을 그립니다.
+      let glowSize = (enlargedMarble.r * 8) + (i * 10); // 확대된 구슬 크기 + 점점 커지는 크기
+      glowColor.setAlpha(map(i, 0, 9, 40, 0)); // 원이 커질수록 투명도를 낮춥니다.
+      fill(glowColor);
+      ellipse(0, 0, glowSize, glowSize);
+    }
+    
+    pop();
     textAlign(CENTER, CENTER);
     textSize(24);
     fill(0);
     text("추억을 보려면 구슬을 누르세요", width/2, height/2 + 100);
+  }
   }
   
   // 애니메이션 진행
@@ -379,8 +414,8 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   
   // 대각선 발판 위치 재조정
-  slopeStart = createVector(windowWidth * 0.1, windowHeight * 0.2);
-  slopeEnd = createVector(windowWidth * 0.7, windowHeight * 0.8);
+  slopeStart = createVector(900, 375); // Moved start point further left
+  slopeEnd = createVector(1220, 470); // Fixed end point
   floorY = slopeEnd.y + 20;
 
   // 슬롯 위치 재조정
