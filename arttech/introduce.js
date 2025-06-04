@@ -31,7 +31,7 @@ function draw() {
     fill(150, 150, 150, fadeIn);
     textSize(min(windowWidth, windowHeight) * 0.025); // 화면 크기에 비례하여 텍스트 크기 설정
     textStyle(NORMAL);
-    text("권경은, 김준성, 윤채원", 0, 0);
+    text("제작: 권경은, 김준성, 윤채원", 0, 0);
     pop();
     
     // 페이드인 애니메이션
