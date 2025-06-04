@@ -1,4 +1,9 @@
 let marblePositions = [];
+let backgroundImage;
+
+function preload() {
+  backgroundImage = loadImage('../image/inTrash.jpg');
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -6,7 +11,11 @@ function setup() {
 }
 
 function draw() {
-  background(210, 195, 160);
+  if (backgroundImage) {
+    image(backgroundImage, 0, 0, width, height);
+  } else {
+    background(210, 195, 160);
+  }
   drawMarbles();
 }
 
