@@ -10,10 +10,10 @@ let startButton;
 let spawnInterval = 1000; // 구슬 생성 간격
 let lastSpawnTime = 0;
 let marbleCount = 0;
-let maxMarbles = 6;
+let maxMarbles = 5; // 6개에서 5개로 변경
 
 // 구슬 순서 정의 (0: 빨강, 1: 파랑, 2: 노랑)
-let marbleOrder = [0, 2, 1, 0, 1, 2]; // 빨강-노랑-파랑-빨강-파랑-노랑
+let marbleOrder = [2, 1, 2, 0, 1]; // 노랑-파랑-노랑-빨강-파랑 순서
 
 let slopeStart, slopeEnd;
 let floorY;
@@ -21,18 +21,19 @@ let slots = [];
 let filledSlots = 0;
 
 // 확대 애니메이션을 위한 변수들
+let isGlowing = false;
+let glowingMarble = null;
+let isAllMarblesStopped = false; // 모든 구슬이 멈췄는지 확인
 let isEnlarging = false;
-let enlargedMarble = null;
 let enlargeProgress = 0;
 let enlargeDuration = 60; // 프레임 단위로 애니메이션 지속 시간
-let isAllMarblesStopped = false; // 모든 구슬이 멈췄는지 확인
 
 // 배경 이미지 변수 추가
 let backgroundImage;
 
 // 이미지를 미리 로드하는 함수
 function preload() {
-  backgroundImage = loadImage('../image/firstbackground.png'); // 이미지 파일 경로 업데이트
+  backgroundImage = loadImage('../image/first.jpg'); // 이미지 파일 경로 업데이트
 }
 
 function setup() {
@@ -115,14 +116,13 @@ function draw() {
           // 모든 구슬이 멈췄는지 확인
           if (filledSlots >= maxMarbles && !isAllMarblesStopped) {
             isAllMarblesStopped = true;
-            // 첫 번째 빨간 구슬 찾기
-            let firstRedMarble = findFirstRedMarble();
-            if (firstRedMarble) {
+            // 첫 번째 노란 구슬 찾기
+            let firstYellowMarble = findFirstYellowMarble();
+            if (firstYellowMarble) {
+              isGlowing = true;
+              glowingMarble = firstYellowMarble;
               isEnlarging = true;
-              enlargedMarble = {...firstRedMarble};
               enlargeProgress = 0;
-              // 첫 번째 빨간 구슬 제거
-              removeMarble(firstRedMarble);
             }
           }
         }
@@ -133,12 +133,13 @@ function draw() {
     drawMarble(marble);
   }
 
-  // 바구니 그리기 (구슬 뒤로) - REMOVED
-  // drawBasket();
-
-  // 확대된 구슬 그리기
-  if (isEnlarging && enlargedMarble) {
-    drawEnlargedMarble();
+  // 빛나는 구슬 그리기
+  if (isGlowing && glowingMarble) {
+    if (isEnlarging) {
+      drawEnlargedMarble();
+    } else {
+      drawGlowingMarble(glowingMarble);
+    }
   }
 
   // 구슬 계속 굴리기
@@ -149,7 +150,6 @@ function draw() {
     }
   }
 }
-
 
 function drawSlope() {
   // 파스텔 핑크 기본 색상 (RGB)
@@ -241,88 +241,50 @@ function drawMarble(marble) {
   pop();
 }
 
-function drawEnlargedMarble() {
+function drawGlowingMarble(marble) {
   push();
+  translate(marble.x, marble.y);
   
-  // 중앙으로 이동하는 애니메이션
-  let targetX = width/2;
-  let targetY = height/2;
-  let currentX = map(enlargeProgress, 0, enlargeDuration, enlargedMarble.x, targetX);
-  let currentY = map(enlargeProgress, 0, enlargeDuration, enlargedMarble.y, targetY);
-  
-  translate(currentX, currentY);
-  
-  // 확대 애니메이션 (8배로 확대)
-  let scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, 8);
-  scale(scaleAmount);
-  
-  // 구슬 그림자
+  // 빛나는 효과 그리기
   noStroke();
-  fill(0, 0, 0, 30);
-  ellipse(2, 2, enlargedMarble.r, enlargedMarble.r);
+  // 구슬 색상 기반으로 빛나는 색상 설정
+  let glowColor = color(marble.color);
+  
+  // 여러 개의 원을 겹쳐 그려 빛나는 효과 생성
+  for (let i = 0; i < 5; i++) {
+    let glowSize = marble.r + (i * 10);
+    glowColor.setAlpha(map(i, 0, 4, 100, 0));
+    fill(glowColor);
+    ellipse(0, 0, glowSize, glowSize);
+  }
   
   // 구슬 본체
-  fill(enlargedMarble.color);
-  ellipse(0, 0, enlargedMarble.r, enlargedMarble.r);
+  fill(marble.color);
+  ellipse(0, 0, marble.r, marble.r);
   
   // 구슬 하이라이트
   fill(255, 255, 255, 100);
-  ellipse(-enlargedMarble.r/4, -enlargedMarble.r/4, enlargedMarble.r/3, enlargedMarble.r/3);
+  ellipse(-marble.r/4, -marble.r/4, marble.r/3, marble.r/3);
   
   pop();
-  
-  // 애니메이션이 완료되면 텍스트 표시
-  if (enlargeProgress >= enlargeDuration) {
-    if (enlargeProgress >= enlargeDuration) {
-    
-    // 빛나는 효과 그리기
-    push();
-    // 빛의 중심을 확대된 구슬의 중심과 일치시킵니다.
-    translate(targetX, targetY);
-    
-    // 구슬 색상 기반으로 빛나는 색상 설정
-    let glowColor = color(enlargedMarble.color);
-    glowColor.setAlpha(50); // 초기 투명도 설정 (0-255)
-    
-    noStroke();
-    // 여러 개의 원을 겹쳐 그려 빛나는 효과 생성
-    for (let i = 0; i < 10; i++) { // 10개의 원을 그립니다.
-      let glowSize = (enlargedMarble.r * 8) + (i * 10); // 확대된 구슬 크기 + 점점 커지는 크기
-      glowColor.setAlpha(map(i, 0, 9, 40, 0)); // 원이 커질수록 투명도를 낮춥니다.
-      fill(glowColor);
-      ellipse(0, 0, glowSize, glowSize);
-    }
-    
-    pop();
-    textAlign(CENTER, CENTER);
-    textSize(24);
-    fill(0);
-    text("추억을 보려면 구슬을 누르세요", width/2, height/2 + 100);
-  }
-  }
-  
-  // 애니메이션 진행
-  if (enlargeProgress < enlargeDuration) {
-    enlargeProgress++;
-  }
 }
 
 function mousePressed() {
-  // 확대된 구슬이 있고 애니메이션이 완료된 경우에만 클릭 감지
-  if (isEnlarging && enlargedMarble && enlargeProgress >= enlargeDuration) {
-    // 마우스 위치가 확대된 구슬 안에 있는지 확인
-    let targetX = width/2;
-    let targetY = height/2;
-    let scaleAmount = 8; // 최종 확대 크기
-    let radius = enlargedMarble.r * scaleAmount;
-    
-    // 마우스와 구슬 중심 사이의 거리 계산
-    let d = dist(mouseX, mouseY, targetX, targetY);
+  // 빛나는 구슬이 있고 모든 구슬이 멈췄을 때만 클릭 감지
+  if (isGlowing && glowingMarble && isAllMarblesStopped) {
+    // 마우스와 구슬 사이의 거리 계산
+    let d = dist(mouseX, mouseY, glowingMarble.x, glowingMarble.y);
     
     // 마우스가 구슬 안에 있는지 확인
-    if (d < radius/2) {
-      // red.html로 이동
-      window.location.href = 'red.html';
+    if (d < glowingMarble.r/2) {
+      // 캐릭터와의 거리 계산
+      let distToCharacter = dist(glowingMarble.x, glowingMarble.y, faceX, faceY);
+      
+      // 캐릭터와 충분히 가까운지 확인
+      if (distToCharacter < 100) {
+        // red.js로 이동
+        window.location.href = 'red.js';
+      }
     }
   }
 }
@@ -365,14 +327,14 @@ function findNextAvailableSlot() {
   return null;
 }
 
-// 첫 번째 빨간 구슬 찾기
-function findFirstRedMarble() {
+// 첫 번째 노란 구슬 찾기
+function findFirstYellowMarble() {
   // 슬롯을 순서대로 검사
   for (let slot of slots) {
     // 각 슬롯의 구슬들을 순서대로 검사
     for (let marble of slot.marbles) {
-      // 첫 번째로 발견되는 빨간 구슬 반환
-      if (marble.color === pastelColors[0]) {
+      // 첫 번째로 발견되는 노란 구슬 반환
+      if (marble.color === pastelColors[2]) {
         return marble;
       }
     }
@@ -424,4 +386,66 @@ function windowResized() {
     slots[i].x = slopeEnd.x - (maxMarbles - 1 - i) * spacing;
     slots[i].y = floorY - 20;
   }
-} 
+}
+
+function drawEnlargedMarble() {
+  push();
+  
+  // 중앙으로 이동하는 애니메이션
+  let targetX = width/2;
+  let targetY = height/2;
+  let currentX = map(enlargeProgress, 0, enlargeDuration, glowingMarble.x, targetX);
+  let currentY = map(enlargeProgress, 0, enlargeDuration, glowingMarble.y, targetY);
+  
+  translate(currentX, currentY);
+  
+  // 확대 애니메이션 (8배로 확대)
+  let scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, 8);
+  scale(scaleAmount);
+  
+  // 구슬 그림자
+  noStroke();
+  fill(0, 0, 0, 30);
+  ellipse(2, 2, glowingMarble.r, glowingMarble.r);
+  
+  // 구슬 본체
+  fill(glowingMarble.color);
+  ellipse(0, 0, glowingMarble.r, glowingMarble.r);
+  
+  // 구슬 하이라이트
+  fill(255, 255, 255, 100);
+  ellipse(-glowingMarble.r/4, -glowingMarble.r/4, glowingMarble.r/3, glowingMarble.r/3);
+  
+  pop();
+  
+  // 애니메이션이 완료되면 텍스트와 빛나는 효과 표시
+  if (enlargeProgress >= enlargeDuration) {
+    // 빛나는 효과 그리기
+    push();
+    translate(targetX, targetY);
+    
+    // 구슬 색상 기반으로 빛나는 색상 설정
+    let glowColor = color(glowingMarble.color);
+    
+    // 여러 개의 원을 겹쳐 그려 빛나는 효과 생성
+    for (let i = 0; i < 10; i++) {
+      let glowSize = (glowingMarble.r * 8) + (i * 20); // 확대된 구슬 크기 + 점점 커지는 크기
+      glowColor.setAlpha(map(i, 0, 9, 100, 0)); // 원이 커질수록 투명도를 낮춥니다.
+      fill(glowColor);
+      ellipse(0, 0, glowSize, glowSize);
+    }
+    
+    pop();
+    
+    // 텍스트 표시
+    textAlign(CENTER, CENTER);
+    textSize(24);
+    fill(0);
+    text("터치해서 구슬에 담긴 추억을 확인해보세요!", width/2, height/2 + 100);
+  }
+  
+  // 애니메이션 진행
+  if (enlargeProgress < enlargeDuration) {
+    enlargeProgress++;
+  }
+}
