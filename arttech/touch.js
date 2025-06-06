@@ -9,6 +9,12 @@ let prevMouseX = 0; // 이전 마우스 X 위치
 let prevMouseY = 0; // 이전 마우스 Y 위치
 let rubbingThreshold = 5; // 문지르기로 인정할 최소 이동 거리
 let requiredRubbingCount = 5; // 필요한 문지르기 횟수
+let rubbingCount = 0; // 현재 문지르기 횟수
+let lastRubbingTime = 0; // 마지막 문지르기 시간
+let isRestored = false; // 구슬이 복원되었는지 여부
+let isCentered = false; // 구슬이 중앙에 위치했는지 여부
+let isExpanding = false; // 구슬이 확장 중인지 여부
+let expansionSpeed = 10; // 구슬 확장 속도
 let isDraggingMode = true; // 드래그 모드인지 문지르기 모드인지 구분
 
 let backgroundImage; // 배경 이미지
