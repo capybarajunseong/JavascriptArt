@@ -3,7 +3,7 @@ let algoboniImage;
 let currentImage;
 
 function preload() {
-  sadnessImage = loadImage('../image/sadness.jpg');
+  sadnessImage = loadImage('../image/sadness.png');
   algoboniImage = loadImage('../image/algoboni.jpg');
 }
 
