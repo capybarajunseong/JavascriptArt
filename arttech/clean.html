@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clean</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
+            background-color: #f5f5f5;
         }
         canvas {
             display: block;
@@ -17,6 +19,16 @@
     </style>
 </head>
 <body>
+    <script>
+        // p5.sound 라이브러리가 제대로 로드되었는지 확인
+        window.addEventListener('load', function() {
+            if (typeof p5.SoundFile === 'undefined') {
+                console.error('p5.sound 라이브러리가 로드되지 않았습니다!');
+            } else {
+                console.log('p5.sound 라이브러리가 성공적으로 로드되었습니다.');
+            }
+        });
+    </script>
     <script src="clean.js"></script>
 </body>
 </html> 

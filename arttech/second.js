@@ -38,6 +38,15 @@ function preload() {
   backgroundImage = loadImage('../image/second.jpg');
 }
 
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let showMessage = false;
+let messageAlpha = 0;
+let messageDirection = 1;
+let transitionArea = {x: 300, y: 200, w: 250, h: 550};
+let hasShownSadness = false;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
@@ -130,6 +139,27 @@ function draw() {
   if (isTransitioning) {
     drawTransitionOverlay();
   }
+
+  // 메시지 표시 (sadness.jpg 이후에만)
+  if (hasShownSadness && showMessage && isGlowing && !isDragging) {
+    textAlign(CENTER, CENTER);
+    textSize(24);
+    fill(0, messageAlpha);
+    text("구슬을 가져다대보세요", width/2, height/2 + 100);
+    
+    // 메시지 페이드 인/아웃 효과
+    messageAlpha += 2 * messageDirection;
+    if (messageAlpha >= 255) {
+      messageDirection = -1;
+    } else if (messageAlpha <= 0) {
+      messageDirection = 1;
+    }
+  }
+
+  // 전환 영역 표시 (디버깅용)
+  // noFill();
+  // stroke(255, 0, 0);
+  // rect(transitionArea.x, transitionArea.y, transitionArea.w, transitionArea.h);
 }
 
 function drawSlope() {
@@ -235,24 +265,16 @@ function drawEnlargedMarble() {
   // 구슬 그림자
   noStroke();
   fill(0, 0, 0, 30);
-  ellipse(2/scaleAmount, 2/scaleAmount, glowingMarble.r * 2, glowingMarble.r * 2);
+  ellipse(2, 2, glowingMarble.r, glowingMarble.r);
 
   // 구슬 본체
   fill(glowingMarble.color);
-  ellipse(0, 0, glowingMarble.r * 2, glowingMarble.r * 2);
+  ellipse(0, 0, glowingMarble.r, glowingMarble.r);
   
   // 구슬 하이라이트
   fill(255, 255, 255, 100);
-  ellipse(-glowingMarble.r/4 / scaleAmount, -glowingMarble.r/4 / scaleAmount, glowingMarble.r/3 * 2, glowingMarble.r/3 * 2);
+  ellipse(-glowingMarble.r/4, -glowingMarble.r/4, glowingMarble.r/3, glowingMarble.r/3);
   
-  // 메시지 표시 (확대 완료 후, 최종 확대 전)
-  if (!isEnlarging && !isFinalEnlarging) {
-    textAlign(CENTER, CENTER);
-    textSize(24 / scaleAmount);
-    fill(0);
-    text("구슬을 눌러 추억을 확인해보세요!", 0, glowingMarble.r * 2 / scaleAmount + 30 / scaleAmount);
-  }
-
   pop();
 }
 
@@ -260,35 +282,72 @@ function drawEnlargedMarble() {
 function drawTransitionOverlay() {
   if (isTransitioning) {
     let alpha = map(transitionProgress, 0, transitionDuration, 0, 255);
-    // 하늘색 구슬의 색상(pastelColors[1])을 사용하여 페이드 아웃
-    let transitionColor = color(pastelColors[1]);
-    transitionColor.setAlpha(alpha);
-    fill(transitionColor);
+    if (!hasShownSadness) {
+      // 하늘색 구슬의 색상(pastelColors[1])을 사용하여 페이드 아웃
+      let transitionColor = color(pastelColors[1]);
+      transitionColor.setAlpha(alpha);
+      fill(transitionColor);
+    } else {
+      fill(0, alpha);
+    }
     rect(0, 0, width, height);
     transitionProgress++;
     
     if (transitionProgress > transitionDuration) {
-      window.location.href = 'sadness.html';
+      if (!hasShownSadness) {
+        window.location.href = 'sadness.html';
+      } else {
+        window.location.href = 'third.html';
+      }
     }
   }
 }
 
 // 마우스 클릭 이벤트 처리 함수 수정
 function mousePressed() {
-  // 빛나는 구슬이 있고 확대 애니메이션이 끝났을 때만 클릭 감지
-  if (isGlowing && glowingMarble && !isEnlarging && !isFinalEnlarging && !isTransitioning) { 
+  if (isGlowing && glowingMarble && !isEnlarging && !isFinalEnlarging) {
     let marbleCenterX = glowingMarble.x;
     let marbleCenterY = glowingMarble.y;
     let finalScale = 1.3;
     let clickableRadius = glowingMarble.r * finalScale;
-    
     let d = dist(mouseX, mouseY, marbleCenterX, marbleCenterY);
     
     if (d < clickableRadius / 2) {
-      // 최종 확대 애니메이션 시작
+      if (!hasShownSadness) {
+        // 기존 기능: sadness.jpg로 전환
+        isFinalEnlarging = true;
+        finalEnlargeProgress = 0;
+      } else {
+        // 새로운 기능: 구슬 드래그 시작
+        isDragging = true;
+        dragOffsetX = mouseX - marbleCenterX;
+        dragOffsetY = mouseY - marbleCenterY;
+        showMessage = false;
+      }
+    }
+  }
+}
+
+function mouseDragged() {
+  if (isDragging && glowingMarble && hasShownSadness) {
+    glowingMarble.x = mouseX - dragOffsetX;
+    glowingMarble.y = mouseY - dragOffsetY;
+
+    // 전환 영역과의 충돌 체크
+    if (glowingMarble.x > transitionArea.x && 
+        glowingMarble.x < transitionArea.x + transitionArea.w &&
+        glowingMarble.y > transitionArea.y && 
+        glowingMarble.y < transitionArea.y + transitionArea.h) {
       isFinalEnlarging = true;
       finalEnlargeProgress = 0;
+      isDragging = false;
     }
+  }
+}
+
+function mouseReleased() {
+  if (isDragging) {
+    isDragging = false;
   }
 }
 
@@ -321,4 +380,12 @@ function windowResized() {
     slots[i].x = slopeEnd.x - 200 - (maxMarbles - 1 - i) * spacing;
     slots[i].y = floorY - 20;
   }
+}
+
+// sadness.html에서 돌아왔을 때 호출되는 함수
+function onReturnFromSadness() {
+  hasShownSadness = true;
+  showMessage = true;
+  messageAlpha = 0;
+  messageDirection = 1;
 }

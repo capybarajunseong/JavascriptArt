@@ -7,7 +7,7 @@ let marbles = [];
 let isRolling = false;
 let pastelColors = ['#FFB3B3', '#A5D8FF', '#FFF5A5']; // 파스텔 빨강, 파랑, 노랑 순서
 let startButton;
-let spawnInterval = 1000; // 구슬 생성 간격
+let spawnInterval = 500; // 구슬 생성 간격을 1000ms에서 500ms로 줄임
 let lastSpawnTime = 0;
 let marbleCount = 0;
 let maxMarbles = 5; // 6개에서 5개로 변경
@@ -372,7 +372,7 @@ function spawnMarble() {
   let startX = slopeStart.x - 50;
   let startY = slopeStart.y - 50;
   let angle = atan2(slopeEnd.y - slopeStart.y, slopeEnd.x - slopeStart.x);
-  let speed = 5;
+  let speed = 10; // 속도를 5에서 10으로 증가
 
   // 지정된 순서대로 색상 지정
   let colorIndex = marbleOrder[marbleCount];
