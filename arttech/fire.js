@@ -2,7 +2,7 @@ let backgroundImage; // 배경 이미지를 저장할 변수
 
 function preload() {
   // 배경 이미지 파일 로드 (파일 이름이 다르면 수정해주세요!)
-  backgroundImage = loadImage('../image/fire.png', () => {
+  backgroundImage = loadImage('../image/fire.jpg', () => {
     console.log("Background image loaded successfully.");
   }, (event) => {
     console.error("Failed to load background image: ", event);
