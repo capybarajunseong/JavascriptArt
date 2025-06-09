@@ -33,6 +33,8 @@ let characterY = 475; // 200 + (550/2) = 475 (사각형의 중심 y좌표)
 let characterWidth = 250; // 사각형의 너비
 let characterHeight = 550; // 사각형의 높이
 
+let isActionTriggered = false; // 액션(구슬 사라짐 및 전환)이 한 번만 실행되도록 하는 플래그
+
 // 이미지를 미리 로드하는 함수
 function preload() {
   backgroundImage = loadImage('../image/first.jpg');
@@ -123,22 +125,36 @@ function draw() {
     let marbleX = draggedMarble.x;
     let marbleY = draggedMarble.y;
     
-    // 구슬이 사각형 영역 안에 있는지 확인
-    if (marbleX > 300 && marbleX < 550 && // x좌표 체크 (300 ~ 550)
-        marbleY > 200 && marbleY < 750) { // y좌표 체크 (200 ~ 750)
-      // 이미지 변경
+    // 구슬이 사각형 영역 안에 있고, 아직 액션이 트리거되지 않았다면
+    if (marbleX > 300 && marbleX < 550 && 
+        marbleY > 200 && marbleY < 750 && 
+        !isActionTriggered) {
+      
+      isActionTriggered = true; // 액션 트리거됨 설정
+
+      // 노란색 구슬 사라지게 하기 (배열에서 제거)
+      marbles = marbles.filter(m => m !== draggedMarble);
+      
+      // 드래그 상태 종료
+      isDragging = false;
+      draggedMarble = null;
+
+      // 배경 이미지 변경
       backgroundImage = secondBackgroundImage;
-      // 2초 후 second.html로 전환
+      
+      console.log("Marble collided with character! Preparing for transition..."); // 충돌 감지 로그
+      // 0.05초 후 second.html로 전환
       setTimeout(() => {
-        window.location.href = 'second.html';
-      }, 2000);
+        console.log("Navigating to second.html now!"); // 전환 시작 로그
+        window.location.href = 'second.html'; // href 사용
+      }, 50); // 50 milliseconds 지연
     }
   }
 
   // 디버깅용: 캐릭터 위치 표시 (개발 중에만 사용)
-  // noFill();
-  // stroke(255, 0, 0);
-  // rect(300, 200, 250, 550);
+  // noFill(); // 주석 처리
+  // stroke(255, 0, 0); // 주석 처리
+  // rect(300, 200, 250, 550); // 충돌 영역 시각화 비활성화
 }
 
 function mousePressed() {

@@ -32,20 +32,6 @@ function draw() {
   line(buttonX - xOffset, buttonY - xOffset, buttonX + xOffset, buttonY + xOffset);
   line(buttonX + xOffset, buttonY - xOffset, buttonX - xOffset, buttonY + xOffset);
 
-  // 손가락 커서 그리기
-  push();
-  translate(mouseX, mouseY);
-  rotate(PI/4); // 45도 회전
-  
-  // 손가락 본체
-  fill(255, 220, 200);
-  noStroke();
-  ellipse(0, 0, 200, 300);
-  
-  // 손톱
-  fill(255, 240, 240);
-  arc(0, -100, 200, 150, PI, 0);
-  pop();
 }
 
 function mousePressed() {
