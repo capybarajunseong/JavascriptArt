@@ -1,15 +1,65 @@
 let sadnessImage;
 
 function preload() {
-  sadnessImage = loadImage('../image/sadness.png'); // sadness.png 이미지 로드
+  sadnessImage = loadImage('../image/sadness.png');
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight); // 캔버스를 창 크기에 맞게 생성
+  createCanvas(windowWidth, windowHeight);
+  cursor(HAND);
 }
 
 function draw() {
   if (sadnessImage) {
-    image(sadnessImage, 0, 0, width, height); // 이미지를 배경으로 표시
+    image(sadnessImage, 0, 0, width, height);
   }
+
+  // 닫기 버튼 그리기
+  let buttonSize = 50;
+  let margin = 20;
+  let buttonX = width - buttonSize / 2 - margin - 50;
+  let buttonY = margin + buttonSize / 2;
+
+  // 빨간색 원
+  noStroke();
+  fill('#FFB3B3');
+  ellipse(buttonX, buttonY, buttonSize, buttonSize);
+
+  // 흰색 X
+  stroke(255);
+  strokeWeight(5);
+  let xOffset = buttonSize * 0.2;
+  line(buttonX - xOffset, buttonY - xOffset, buttonX + xOffset, buttonY + xOffset);
+  line(buttonX + xOffset, buttonY - xOffset, buttonX - xOffset, buttonY + xOffset);
+
+  // 손가락 커서 그리기
+  push();
+  translate(mouseX, mouseY);
+  rotate(PI/4); // 45도 회전
+  
+  // 손가락 본체
+  fill(255, 220, 200);
+  noStroke();
+  ellipse(0, 0, 200, 300);
+  
+  // 손톱
+  fill(255, 240, 240);
+  arc(0, -100, 200, 150, PI, 0);
+  pop();
+}
+
+function mousePressed() {
+  let buttonSize = 50;
+  let margin = 20;
+  let buttonX = width - buttonSize / 2 - margin - 50;
+  let buttonY = margin + buttonSize / 2;
+
+  let d = dist(mouseX, mouseY, buttonX, buttonY);
+  if (d < buttonSize / 2) {
+    window.location.href = 'second.html';
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }

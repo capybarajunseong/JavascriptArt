@@ -280,6 +280,11 @@ function drawEnlargedMarble() {
     finalEnlargeProgress++;
     if (finalEnlargeProgress > finalEnlargeDuration) {
       isFinalEnlarging = false;
+      // 구슬의 상태를 localStorage에 저장
+      localStorage.setItem('marbleScale', scaleAmount);
+      localStorage.setItem('marbleX', glowingMarble.x);
+      localStorage.setItem('marbleY', glowingMarble.y);
+      localStorage.setItem('marbleRadius', glowingMarble.r);
       window.location.href = 'happy.html';
     }
   } else {
