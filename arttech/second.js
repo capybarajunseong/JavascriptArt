@@ -35,7 +35,7 @@ let backgroundImage;
 
 // 이미지를 미리 로드하는 함수
 function preload() {
-  backgroundImage = loadImage('../image/first.jpg');
+  backgroundImage = loadImage('../image/second.jpg');
 }
 
 function setup() {

@@ -27,10 +27,10 @@ function drawMarbles() {
   let outline = [];
   let step = marbleSize * 0.8;
 
-  // 기존 윤곽선 계산 (구슬 배치의 상한선 역할)
+  // 고정된 윤곽선 계산
   for (let x = width * 0.1; x <= width * 0.9; x += step) {
     let nx = map(x, width * 0.1, width * 0.9, 0, 5);
-    let y = height - 100 - noise(nx) * 400; // 원래 윤곽선 Y 좌표
+    let y = height - 100 - sin(nx) * 200; // sin 함수로 고정된 곡선 생성
     outline.push({x, y});
   }
 
@@ -38,38 +38,41 @@ function drawMarbles() {
   for (let i = 0; i < numMarbles; i++) {
     let placed = false;
     let tries = 0;
-    // 시도 횟수 늘림
-    while (!placed && tries < 500) { // 최대 500번 시도
+    while (!placed && tries < 500) {
       tries++;
 
-      // 윤곽선 범위 내에서 가장 가까운 점 찾기
-      let randomOutlinePoint = random(outline);
-      let baseX = randomOutlinePoint.x; // 윤곽선 상의 X 위치
-      let outlineY = randomOutlinePoint.y; // 해당 X에서의 윤곽선 Y
+      // 더 자연스러운 구슬 배치
+      let outlineIndex = floor(i / 15) % outline.length; // 15개씩 같은 높이에 배치
+      let baseX = outline[outlineIndex].x;
+      let outlineY = outline[outlineIndex].y;
 
-      // X 좌표는 윤곽선 점 주변으로 무작위 선택
-      let x = baseX + random(-step/2, step/2);
+      // x 좌표를 약간의 오프셋을 주어 배치
+      let xOffset = (i % 15) * (step * 0.9);
+      let x = baseX + xOffset + sin(i * 0.5) * 10; // sin 함수로 약간의 변동 추가
+      
+      // y 좌표도 약간의 변동을 주어 배치
+      let yOffset = floor(i / 150) * (marbleSize * 0.9);
+      let y = outlineY + yOffset + cos(i * 0.3) * 15; // cos 함수로 약간의 변동 추가
 
-      // Y 좌표는 화면 하단부터 윤곽선 Y까지 무작위 선택
-      let y = random(outlineY, height); // Y 좌표 범위를 넓힘
-
-      // (기존 코드 유지) Y 좌표 하한선 조정
       if (y > height - 100 - marbleSize * 0.5) y = height - 100 - marbleSize * 0.5;
 
       let overlapping = false;
-      // 기존 구슬들과 겹치는지 확인
       for (let pos of marblePositions) {
-        // 두 구슬 중심 사이의 거리가 구슬 지름(또는 그에 가까운 값)보다 작으면 겹침
-        if (dist(x, y, pos.x, pos.y) < marbleSize) {
+        if (dist(x, y, pos.x, pos.y) < marbleSize * 0.9) { // 겹침 판정 범위를 약간 줄임
           overlapping = true;
           break;
         }
       }
 
-      // 겹치지 않으면 구슬 위치 추가
       if (!overlapping) {
-        let randomColor = random(pastelColors); // 파스텔 색상 중 무작위 선택
-        marblePositions.push({x, y, r: marbleSize, color: color(randomColor)});
+        // 색상을 더 자연스럽게 섞이도록 패턴 수정
+        let colorIndex = (floor(i / 3) + floor(i / 7)) % 2;
+        marblePositions.push({
+          x: x,
+          y: y,
+          r: marbleSize,
+          color: color(pastelColors[colorIndex])
+        });
         placed = true;
       }
     }

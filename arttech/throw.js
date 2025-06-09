@@ -39,12 +39,14 @@ function draw() {
     marbleX = bezierPoint(startX, cp1X, cp2X, endX, t);
     marbleY = bezierPoint(startY, cp1Y, cp2Y, endY, t);
 
-    drawMarble(marbleX, marbleY, 30); // 회색 구슬 그리기
+    drawMarble(marbleX, marbleY, 30); // 하늘색 구슬 그리기
 
     t += 0.012; // 애니메이션 속도 증가
     if (t >= 1) {
       isMarbleMoving = false;
       isMarbleVisible = false; // 도착 후 사라지게
+      // fire.js로 이동
+      window.location.href = 'fire.html';
     }
   }
 }
@@ -53,11 +55,11 @@ function drawMarble(x, y, r) {
   push();
   translate(x, y);
 
-  // 구슬 그라데이션 효과 (회색)
+  // 구슬 그라데이션 효과 (하늘색)
   let gradient = drawingContext.createRadialGradient(0, 0, 0, 0, 0, r);
-  gradient.addColorStop(0, 'rgba(200, 200, 200, 1)');
-  gradient.addColorStop(0.5, 'rgba(150, 150, 150, 1)');
-  gradient.addColorStop(1, 'rgba(100, 100, 100, 1)');
+  gradient.addColorStop(0, 'rgba(173, 216, 230, 1)'); // 하늘색
+  gradient.addColorStop(0.5, 'rgba(135, 206, 235, 1)'); // 밝은 하늘색
+  gradient.addColorStop(1, 'rgba(100, 181, 246, 1)'); // 진한 하늘색
 
   drawingContext.fillStyle = gradient;
   noStroke();
