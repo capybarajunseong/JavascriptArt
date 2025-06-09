@@ -41,7 +41,7 @@ function mousePressed() {
 
   let d = dist(mouseX, mouseY, buttonX, buttonY);
   if (d < buttonSize / 2) {
-    window.location.href = 'second.html';
+    window.location.href = 'sdpull.html';
   }
 }
 

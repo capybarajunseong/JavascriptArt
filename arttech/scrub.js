@@ -29,7 +29,7 @@ let isTransitionTriggered = false; // 전환 시퀀스 트리거 여부
 const messageDisplayDuration = 1000; // '재 닦기 완료' 메시지 표시 시간 (1초)
 
 function preload() {
-  backgroundImage = loadImage('../image/inTrash.jpg', 
+  backgroundImage = loadImage('../image/inFire.jpg', 
     () => {
       console.log('이미지 로드 성공');
       imageLoaded = true;

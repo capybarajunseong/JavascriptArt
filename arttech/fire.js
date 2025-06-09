@@ -12,6 +12,11 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight); // 캔버스 크기를 창 크기에 맞게 조정
   // 여기에 필요한 초기 설정을 추가합니다.
+
+  // 3초 후에 smoke.html로 이동
+  setTimeout(() => {
+    window.location.href = 'smoke.html';
+  }, 1000); // 3000 밀리초 = 3초
 }
 
 function draw() {
