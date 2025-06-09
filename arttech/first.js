@@ -261,7 +261,7 @@ function drawEnlargedMarble() {
 
   push();
   translate(glowingMarble.x, glowingMarble.y);
-  let finalScale = 1.3;
+  let finalScale = 1.3; // 최종 확대 배율을 1.3으로 설정
   let scaleAmount = currentScale;
 
   if (isEnlarging) {
@@ -269,7 +269,7 @@ function drawEnlargedMarble() {
     enlargeProgress++;
     if (enlargeProgress > enlargeDuration) {
       isEnlarging = false;
-      currentScale = finalScale; // 확대 끝나면 무조건 1.3으로 고정
+      currentScale = finalScale; // 확대 끝나면 1.3으로 고정
       scaleAmount = finalScale;
     } else {
       currentScale = scaleAmount; // 애니메이션 중에는 계속 갱신
@@ -283,7 +283,7 @@ function drawEnlargedMarble() {
       window.location.href = 'happy.html';
     }
   } else {
-    // 확대 애니메이션이 끝난 뒤에는 무조건 1.3배 유지!
+    // 확대 애니메이션이 끝난 뒤에는 1.3배 유지
     currentScale = finalScale;
     scaleAmount = finalScale;
   }
