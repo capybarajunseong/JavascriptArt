@@ -58,7 +58,7 @@ function setup() {
   for (let i = 0; i < maxMarbles; i++) {
     let spacing = windowWidth * 0.07;
     let x = slopeEnd.x - (maxMarbles - 1 - i) * spacing;
-    let y = floorY - 20;
+    let y = floorY + 10; // Y축으로 30픽셀 더 아래로 조정 (원래 -20 -> +10)
     slots.push({
       x,
       y,
@@ -119,7 +119,7 @@ function draw() {
             
             // 구슬 위치 조정 (바구니 안쪽으로)
             marble.x = slot.x;
-            marble.y = floorY - slot.stackHeight - 10;
+            marble.y = floorY - slot.stackHeight + 20; // Y축으로 30픽셀 더 아래로 조정 (원래 -10 -> +20)
             marble.vx = 0;
             marble.vy = 0;
             marble.stopped = true;
@@ -456,6 +456,6 @@ function windowResized() {
   for (let i = 0; i < slots.length; i++) {
     let spacing = windowWidth * 0.07;
     slots[i].x = slopeEnd.x - (maxMarbles - 1 - i) * spacing;
-    slots[i].y = floorY - 20;
+    slots[i].y = floorY + 10; // Y축으로 30픽셀 더 아래로 조정 (원래 -20 -> +10)
   }
 }
