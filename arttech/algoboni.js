@@ -43,6 +43,12 @@ function draw() {
     if (elapsed >= fadeDuration) {
       imageAlpha = 255;
       transitionState = 3; // ggadarm 보임 상태로 변경 (전환 완료)
+      fadeStartTime = millis(); // ggadarm이 보이기 시작한 시간 기록
+    }
+  } else if (transitionState === 3) { // ggadarm이 보이는 상태
+    // ggadarm이 보이기 시작한 후 1초가 지나면 clean.js로 이동
+    if (millis() - fadeStartTime >= 1000) {
+      window.location.href = 'clean.html';
     }
   }
 

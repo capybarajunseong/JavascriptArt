@@ -3,7 +3,7 @@ let characterImg;
 let character = {
     x: 400,
     y: 300,
-    speed: 5,
+    speed: 3.5,
     width: 90, // 최대 크기(실제 사용은 drawCharacter에서 동적으로 결정)
     height: 180
 };

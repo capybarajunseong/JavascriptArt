@@ -10,6 +10,7 @@ let soundLoaded = false;
 let hasUserInteracted = false;
 let hasPlayedSound = false;
 let soundPlayScheduledTime = 0;
+let fadeStartTime;
 const SOUND_INITIAL_DELAY_MS = 1000; 
 
 function preload() {
@@ -108,10 +109,15 @@ function draw() {
       if (fadeAlpha === 0) {
         currentImage = backgroundImage2;
         fadeAlpha = 0;
+        fadeStartTime = millis(); // afterClean.png가 보이기 시작한 시간 기록
       }
     } else {
       // 페이드 인 효과
       fadeAlpha = min(255, fadeAlpha + 5);
+      // afterClean.png가 완전히 보이고 1초가 지나면 out.js로 이동
+      if (fadeAlpha === 255 && millis() - fadeStartTime >= 1000) {
+        window.location.href = 'out.html';
+      }
     }
   }
 

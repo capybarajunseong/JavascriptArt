@@ -372,7 +372,7 @@ function spawnMarble() {
   let startX = slopeStart.x - 50;
   let startY = slopeStart.y - 50;
   let angle = atan2(slopeEnd.y - slopeStart.y, slopeEnd.x - slopeStart.x);
-  let speed = 10; // 속도를 5에서 10으로 증가
+  let speed = 6; // 속도를 5에서 10으로 증가
 
   // 지정된 순서대로 색상 지정
   let colorIndex = marbleOrder[marbleCount];
