@@ -28,10 +28,10 @@ let dragOffsetX = 0;
 let dragOffsetY = 0;
 
 // 캐릭터 위치
-let characterX = 200; // 금발 캐릭터의 x 위치를 더 왼쪽으로
-let characterY = 350; // 금발 캐릭터의 y 위치를 위로 조정
-let characterRadius = 100; // 캐릭터의 충돌 감지 범위를 넓게 설정
-let characterHeight = 200; // 캐릭터의 높이 범위를 넓게 설정
+let characterX = 425; // 300 + (250/2) = 425 (사각형의 중심 x좌표)
+let characterY = 475; // 200 + (550/2) = 475 (사각형의 중심 y좌표)
+let characterWidth = 250; // 사각형의 너비
+let characterHeight = 550; // 사각형의 높이
 
 // 이미지를 미리 로드하는 함수
 function preload() {
@@ -119,21 +119,26 @@ function draw() {
     draggedMarble.x = mouseX - dragOffsetX;
     draggedMarble.y = mouseY - dragOffsetY;
 
-    // 캐릭터와의 충돌 체크 (범위를 넓게)
-    let d = dist(draggedMarble.x, draggedMarble.y, characterX, characterY);
-    // y축 범위 체크 추가
-    let yDiff = abs(draggedMarble.y - characterY);
-    if (d < characterRadius && yDiff < characterHeight/2) {
-      // second.js로 이동
-      window.location.href = 'second.html';
+    // 캐릭터와의 충돌 체크 (사각형 영역)
+    let marbleX = draggedMarble.x;
+    let marbleY = draggedMarble.y;
+    
+    // 구슬이 사각형 영역 안에 있는지 확인
+    if (marbleX > 300 && marbleX < 550 && // x좌표 체크 (300 ~ 550)
+        marbleY > 200 && marbleY < 750) { // y좌표 체크 (200 ~ 750)
+      // 이미지 변경
+      backgroundImage = secondBackgroundImage;
+      // 2초 후 second.html로 전환
+      setTimeout(() => {
+        window.location.href = 'second.html';
+      }, 2000);
     }
   }
 
   // 디버깅용: 캐릭터 위치 표시 (개발 중에만 사용)
   // noFill();
   // stroke(255, 0, 0);
-  // ellipse(characterX, characterY, characterRadius * 2);
-  // rect(characterX - characterRadius, characterY - characterHeight/2, characterRadius * 2, characterHeight);
+  // rect(300, 200, 250, 550);
 }
 
 function mousePressed() {
