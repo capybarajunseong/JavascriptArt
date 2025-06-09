@@ -24,17 +24,18 @@ let filledSlots = 0;
 let isGlowing = false;
 let glowingMarble = null;
 let isAllMarblesStopped = false; // 모든 구슬이 멈췄는지 확인
-let isEnlarging = false; // Initial enlargement to center
+let isEnlarging = false; // 제자리에서 확대 중인지
 let enlargeProgress = 0;
-let enlargeDuration = 60; // 프레임 단위로 애니메이션 지속 시간
+let enlargeDuration = 30; // 프레임 단위 (애니메이션 속도 조정)
+let currentScale = 1; // 현재 스케일을 저장하는 변수 추가
 
-let isFinalEnlarging = false; // Final enlargement to fill screen
+// 최종 확대 및 전환을 위한 변수들
+let isFinalEnlarging = false; // 더 이상 사용하지 않음
 let finalEnlargeProgress = 0;
-let finalEnlargeDuration = 90; // 프레임 단위로 최종 확대 지속 시간
-
-let isTransitioningToHappy = false; // happy.html로 전환 중인지 확인
+let finalEnlargeDuration = 60;
+let isTransitioningToHappy = false; // 더 이상 사용하지 않음
 let transitionProgress = 0;
-let transitionDuration = 60; // 프레임 단위로 그라데이션 전환 지속 시간
+let transitionDuration = 30;
 
 // 배경 이미지 변수 추가
 let backgroundImage;
@@ -91,71 +92,71 @@ function draw() {
     if (backgroundImage) {
       image(backgroundImage, 0, 0, width, height);
     } else {
-      // 이미지가 로드되지 않았을 경우 대체 배경 (이전 그라데이션 또는 단색)
       background(245);
     }
 
     // 대각선 발판 그리기
     drawSlope();
 
-    // 구슬 그리기 (최종 확대 중이 아닐 때만)
-    if (!isFinalEnlarging) {
-      for (let marble of marbles) {
-        if (!marble.stopped) {
-          // 구슬 이동 및 회전
-          marble.x += marble.vx;
-          marble.y += marble.vy;
-          marble.rotation += marble.vx * 2;
+    // 구슬 그리기 (빛나는 구슬 제외하고 그리기)
+    for (let marble of marbles) {
+      // 빛나는 구슬은 건너뛰기
+      if (isGlowing && glowingMarble && marble === glowingMarble) continue;
 
-          // 바구니 안에 닿으면 슬롯에 넣기
-          if (marble.y >= floorY - marble.r / 2) {
-            let slot = findNextAvailableSlot();
-            if (slot) {
-              // 구슬을 슬롯에 추가
-              slot.marbles.push(marble);
-              slot.stackHeight += marble.r * 0.8;
-              
-              // 구슬 위치 조정 (바구니 안쪽으로)
-              marble.x = slot.x;
-              marble.y = floorY - slot.stackHeight - 10;
-              marble.vx = 0;
-              marble.vy = 0;
-              marble.stopped = true;
-              slot.filled = true;
-              filledSlots++;
+      if (!marble.stopped) {
+        // 구슬 이동 및 회전
+        marble.x += marble.vx;
+        marble.y += marble.vy;
+        marble.rotation += marble.vx * 2;
 
-              // 모든 구슬이 멈췄는지 확인
-              if (filledSlots >= maxMarbles && !isAllMarblesStopped) {
-                isAllMarblesStopped = true;
-                // 첫 번째 노란 구슬 찾기
-                let firstYellowMarble = findFirstYellowMarble();
-                if (firstYellowMarble) {
-                  isGlowing = true;
-                  glowingMarble = firstYellowMarble;
-                  isEnlarging = true; // Start initial enlargement
-                  enlargeProgress = 0;
-                }
+        // 바구니 안에 닿으면 슬롯에 넣기
+        if (marble.y >= floorY - marble.r / 2) {
+          let slot = findNextAvailableSlot();
+          if (slot) {
+            // 구슬을 슬롯에 추가
+            slot.marbles.push(marble);
+            slot.stackHeight += marble.r * 0.8;
+            
+            // 구슬 위치 조정 (바구니 안쪽으로)
+            marble.x = slot.x;
+            marble.y = floorY - slot.stackHeight - 10;
+            marble.vx = 0;
+            marble.vy = 0;
+            marble.stopped = true;
+            slot.filled = true;
+            filledSlots++;
+
+            // 모든 구슬이 멈췄는지 확인
+            if (filledSlots >= maxMarbles && !isAllMarblesStopped) {
+              isAllMarblesStopped = true;
+              // 첫 번째 노란 구슬 찾기
+              let firstYellowMarble = findFirstYellowMarble();
+              if (firstYellowMarble) {
+                isGlowing = true;
+                glowingMarble = firstYellowMarble;
+                isEnlarging = true;
+                enlargeProgress = 0;
               }
             }
           }
         }
-
-        // 구슬 그리기
-        drawMarble(marble);
       }
+
+      // 구슬 그리기
+      drawMarble(marble);
     }
 
-    // 구슬 계속 굴리기 (최종 확대 중이 아닐 때만)
-    if (isRolling && !isFinalEnlarging) {
-      if (millis() - lastSpawnTime > spawnInterval && marbleCount < maxMarbles) {
+    // 구슬 계속 굴리기
+    if (isRolling && marbleCount < maxMarbles) {
+      if (millis() - lastSpawnTime > spawnInterval) {
         spawnMarble();
         lastSpawnTime = millis();
       }
     }
   }
 
-  // 확대된 구슬 그리기 (화면 전환 중이거나 최종 확대 중일 때)
-  if (isGlowing && glowingMarble && (isEnlarging || isFinalEnlarging)) {
+  // 확대된 구슬 그리기 (항상 마지막에 그려서 다른 구슬들 위에 표시)
+  if (isGlowing && glowingMarble) {
     drawEnlargedMarble();
   }
 
@@ -256,76 +257,47 @@ function drawMarble(marble) {
 }
 
 function drawEnlargedMarble() {
-  push();
-  
-  let targetX = width/2;
-  let targetY = height/2;
-  let scaleAmount = 1; // Default scale
+  if (!glowingMarble) return;
 
-  let currentMarbleX = glowingMarble.x;
-  let currentMarbleY = glowingMarble.y;
+  push();
+  translate(glowingMarble.x, glowingMarble.y);
+  let finalScale = 1.3;
+  let scaleAmount = currentScale;
 
   if (isEnlarging) {
-    // 중앙으로 이동하는 초기 애니메이션
-    currentMarbleX = map(enlargeProgress, 0, enlargeDuration, glowingMarble.x, targetX);
-    currentMarbleY = map(enlargeProgress, 0, enlargeDuration, glowingMarble.y, targetY);
-    scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, 8);
-    
-    // 애니메이션 진행
-    if (enlargeProgress < enlargeDuration) {
-      enlargeProgress++;
-    } else if (!isFinalEnlarging && !isTransitioningToHappy) {
-        // Initial enlargement is complete, and not yet in final phases
-        // Stay at the center and scaled up, waiting for click
-        currentMarbleX = targetX;
-        currentMarbleY = targetY;
-        scaleAmount = 8; // Stay at 8x scale
-    }
-    
-  } else if (isFinalEnlarging) {
-    // 화면 전체를 채우는 최종 애니메이션
-    currentMarbleX = targetX; // Already at the center from initial phase
-    currentMarbleY = targetY;
-
-    // 화면을 채울 정도의 큰 스케일 계산
-    let maxScale = max(width / (glowingMarble.r * 2), height / (glowingMarble.r * 2));
-    scaleAmount = map(finalEnlargeProgress, 0, finalEnlargeDuration, 8, maxScale);
-
-    // 최종 확대 애니메이션 진행
-    if (finalEnlargeProgress < finalEnlargeDuration) {
-      finalEnlargeProgress++;
+    scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, finalScale);
+    enlargeProgress++;
+    if (enlargeProgress > enlargeDuration) {
+      isEnlarging = false;
+      currentScale = finalScale; // 확대 끝나면 무조건 1.3으로 고정
+      scaleAmount = finalScale;
     } else {
-      // 최종 확대 애니메이션 완료 후 전환 시작
-      isFinalEnlarging = false; // Stop final enlargement
-      isTransitioningToHappy = true; // Start transition
-      transitionProgress = 0; // Reset transition progress
-      // Do NOT navigate here yet, drawTransitionOverlay will handle it
+      currentScale = scaleAmount; // 애니메이션 중에는 계속 갱신
     }
+  } else if (isFinalEnlarging) {
+    let maxScale = max(width / (glowingMarble.r * 2), height / (glowingMarble.r * 2));
+    scaleAmount = map(finalEnlargeProgress, 0, finalEnlargeDuration, finalScale, maxScale);
+    finalEnlargeProgress++;
+    if (finalEnlargeProgress > finalEnlargeDuration) {
+      isFinalEnlarging = false;
+      window.location.href = 'happy.html';
+    }
+  } else {
+    // 확대 애니메이션이 끝난 뒤에는 무조건 1.3배 유지!
+    currentScale = finalScale;
+    scaleAmount = finalScale;
   }
-  
-  // Apply translation and scaling based on calculated values
-  translate(currentMarbleX, currentMarbleY);
+
   scale(scaleAmount);
 
-  // === Draw elements relative to the marble's scaled position (origin at 0,0) ===
-
-  // 빛나는 효과 그리기
-  // Draw glow relative to the enlarged marble (scaleAmount is applied)
-  // 빛나는 효과는 초기 확대가 완료되고 최종 확대/전환 중이 아닐 때만 그립니다.
-  if (enlargeProgress >= enlargeDuration && !isFinalEnlarging && !isTransitioningToHappy) {
+  // 빛나는 효과 (확대 끝난 후에도 계속)
+  if (!isEnlarging && !isFinalEnlarging) {
     push();
-    // translate(0, 0); // Already translated to marble center
-    
-    // 구슬 색상 기반으로 빛나는 색상 설정
     let glowColor = color(glowingMarble.color);
-    
-    // 여러 개의 원을 겹쳐 그려 빛나는 효과 생성
-    for (let i = 0; i < 5; i++) { 
-      // Glow size is relative to the current scaled marble size
-      // We draw at the origin (marble center), scale is already applied.
-      let baseGlowSize = glowingMarble.r * 2; // Base diameter of the marble
-      let glowRingSize = baseGlowSize + (i * 10 / scaleAmount); // Add scaled down increment
-      glowColor.setAlpha(map(i, 0, 4, 40, 0)); // Keep opacity logic
+    for (let i = 0; i < 5; i++) {
+      let baseGlowSize = glowingMarble.r * 2;
+      let glowRingSize = baseGlowSize + (i * 10 / scaleAmount);
+      glowColor.setAlpha(map(i, 0, 4, 40, 0));
       fill(glowColor);
       ellipse(0, 0, glowRingSize, glowRingSize);
     }
@@ -333,32 +305,25 @@ function drawEnlargedMarble() {
   }
 
   // 구슬 그림자
-  // Shadow position and size should be scaled correctly. Offset is relative to marble center.
   noStroke();
   fill(0, 0, 0, 30);
-  // Position offset (2,2) needs to be scaled down relative to the current scaleAmount
-  // Size is the marble's diameter (2*r). This also gets scaled by scaleAmount.
   ellipse(2/scaleAmount, 2/scaleAmount, glowingMarble.r * 2, glowingMarble.r * 2);
-
   // 구슬 본체
   fill(glowingMarble.color);
-  ellipse(0, 0, glowingMarble.r * 2, glowingMarble.r * 2); // Use diameter for clarity
-  
+  ellipse(0, 0, glowingMarble.r * 2, glowingMarble.r * 2);
   // 구슬 하이라이트
   fill(255, 255, 255, 100);
-  // Position offset (-r/4, -r/4) needs to be scaled down. Size (r/3) gets scaled up.
-  ellipse(-glowingMarble.r/4 / scaleAmount, -glowingMarble.r/4 / scaleAmount, glowingMarble.r/3 * 2, glowingMarble.r/3 * 2); // Use diameter for clarity
-  
-  // 텍스트 표시 (only when initial enlargement is complete and not final enlarging or transitioning)
-  if (enlargeProgress >= enlargeDuration && !isFinalEnlarging && !isTransitioningToHappy) {
+  ellipse(-glowingMarble.r/4 / scaleAmount, -glowingMarble.r/4 / scaleAmount, glowingMarble.r/3 * 2, glowingMarble.r/3 * 2);
+
+  // 메시지 표시 (확대 완료 후, 최종 확대 전)
+  if (!isEnlarging && !isFinalEnlarging) {
     textAlign(CENTER, CENTER);
-    textSize(24 / scaleAmount); // Text size scaled down
+    textSize(24 / scaleAmount);
     fill(0);
-    // Text position (100px below center) scaled down
-    text("터치해서 구슬에 담긴 추억을 확인해보세요!", 0, 100 / scaleAmount);
+    text("구슬을 눌러 추억을 확인해보세요!", 0, glowingMarble.r * 2 / scaleAmount + 30 / scaleAmount);
   }
 
-  pop(); // Restore original drawing settings
+  pop();
 }
 
 function drawTransitionOverlay() {
@@ -377,23 +342,16 @@ function drawTransitionOverlay() {
 }
 
 function mousePressed() {
-  // Detect click only when initial enlargement is complete and waiting for final enlargement, and not transitioning
-  if (isGlowing && glowingMarble && isAllMarblesStopped && enlargeProgress >= enlargeDuration && !isFinalEnlarging && !isTransitioningToHappy) {
-    // Mouse position is in screen coordinates. 
-    // Marble is at width/2, height/2 with a scale of 8.
-    let marbleCenterX = width/2;
-    let marbleCenterY = height/2;
-    // The clickable radius is the marble's original radius (glowingMarble.r) scaled by 8.
-    let clickableRadius = glowingMarble.r * 8;
-    
+  // 빛나는 구슬이 있고 확대 애니메이션이 끝났을 때만 클릭 감지
+  if (isGlowing && glowingMarble && !isEnlarging && !isFinalEnlarging) {
+    let marbleCenterX = glowingMarble.x;
+    let marbleCenterY = glowingMarble.y;
+    let finalScale = 1.3;
+    let clickableRadius = glowingMarble.r * finalScale;
     let d = dist(mouseX, mouseY, marbleCenterX, marbleCenterY);
-    
-    // Check if the mouse click is within the scaled marble's area
-    if (d < clickableRadius / 2) { // Use radius (half of diameter)
-      // Start final enlargement
-      isEnlarging = false; // Stop initial enlargement state
+    if (d < clickableRadius / 2) {
       isFinalEnlarging = true;
-      finalEnlargeProgress = 0; // Start final enlargement progress
+      finalEnlargeProgress = 0;
     }
   }
 }
