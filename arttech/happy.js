@@ -57,8 +57,8 @@ function mousePressed() {
   // 마우스 클릭 위치가 버튼 원 영역 안에 있는지 확인 (원 중심으로부터 거리 계산)
   let d = dist(mouseX, mouseY, buttonX, buttonY);
   if (d < buttonSize / 2) {
-    // 버튼 클릭 시 second.html로 이동
-    window.location.href = 'second.html';
+    // 버튼 클릭 시 hppull.html로 이동
+    window.location.href = 'hppull.html';
   }
 }
 
