@@ -1,3 +1,8 @@
+let faceX, faceY;
+let hairColor;
+let eyeColor;
+let skinColor;
+
 let marbles = [];
 let pastelColors = ['#FFB3B3', '#A5D8FF', '#FFF5A5']; // 파스텔 빨강, 파랑, 노랑 순서
 let maxMarbles = 4; // 5개에서 4개로 변경 (첫 번째 노란 구슬 제외)
@@ -53,11 +58,20 @@ function setup() {
     });
   }
 
+  // 캐릭터 위치 설정
+  faceX = width/2;
+  faceY = height/2;
+  
+  // 색상 설정
+  hairColor = color(139, 69, 19);
+  eyeColor = color(0);
+  skinColor = color(255, 218, 185);
+
   // 구슬들을 바로 슬롯에 배치
   for (let i = 0; i < maxMarbles; i++) {
     let colorIndex = marbleOrder[i];
     let color = pastelColors[colorIndex];
-
+    
     let marble = {
       x: slots[i].x,
       y: floorY - (slots[i].stackHeight + 20),
@@ -65,11 +79,12 @@ function setup() {
       color: color,
       rotation: random(0, 360)
     };
-
+    
     slots[i].marbles.push(marble);
     slots[i].stackHeight += marble.r * 0.8;
     slots[i].filled = true;
     marbles.push(marble);
+    filledSlots++;
   }
 
   // 첫 번째 하늘색 구슬을 바로 확대된 상태로 설정
@@ -150,36 +165,41 @@ function drawEnlargedMarble() {
   if (!glowingMarble) return;
 
   push();
+  
+  // 구슬의 원래 위치로 이동
   translate(glowingMarble.x, glowingMarble.y);
-  rotate(glowingMarble.rotation); // Keep rotation
-
-  let scaleAmount = 1.3; // Use 1.3 as requested by user
+  
+  // 항상 1.3배 크기로 고정
+  let scaleAmount = 1.3;
   scale(scaleAmount);
 
-  // Glowing effect
+  // 빛나는 효과 그리기
+  push();
   let glowColor = color(glowingMarble.color);
-  for (let i = 0; i < 5; i++) {
+  
+  for (let i = 0; i < 5; i++) { 
     let baseGlowSize = glowingMarble.r * 2;
     let glowRingSize = baseGlowSize + (i * 10 / scaleAmount);
     glowColor.setAlpha(map(i, 0, 4, 40, 0));
     fill(glowColor);
     ellipse(0, 0, glowRingSize, glowRingSize);
   }
+  pop();
 
-  // Marble shadow
+  // 구슬 그림자
   noStroke();
   fill(0, 0, 0, 30);
-  ellipse(2 / scaleAmount, 2 / scaleAmount, glowingMarble.r * 2, glowingMarble.r * 2);
+  ellipse(2/scaleAmount, 2/scaleAmount, glowingMarble.r * 2, glowingMarble.r * 2);
 
-  // Marble body
+  // 구슬 본체
   fill(glowingMarble.color);
   ellipse(0, 0, glowingMarble.r * 2, glowingMarble.r * 2);
-
-  // Marble highlight
+  
+  // 구슬 하이라이트
   fill(255, 255, 255, 100);
-  ellipse(-glowingMarble.r / 4 / scaleAmount, -glowingMarble.r / 4 / scaleAmount, glowingMarble.r / 3 * 2, glowingMarble.r / 3 * 2);
-
-  // Message display
+  ellipse(-glowingMarble.r/4 / scaleAmount, -glowingMarble.r/4 / scaleAmount, glowingMarble.r/3 * 2, glowingMarble.r/3 * 2);
+  
+  // 메시지 표시
   textAlign(CENTER, CENTER);
   textSize(24 / scaleAmount);
   fill(0);
@@ -201,33 +221,40 @@ function findFirstBlueMarble() {
   return null;
 }
 
+// 창 크기가 변경될 때 캔버스 크기도 조정
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  // 발판 위치 재설정
-  slopeStart = createVector(width * 0.7, height * 0.5);
-  slopeEnd = createVector(width * 0.9, height * 0.7);
+  
+  // 대각선 발판 위치 재조정
+  slopeStart = createVector(900, 375);
+  slopeEnd = createVector(1220, 470);
   floorY = slopeEnd.y + 20;
 
-  // 슬롯 위치 재계산
-  for (let i = 0; i < maxMarbles; i++) {
+  // 슬롯 위치 재조정
+  for (let i = 0; i < slots.length; i++) {
     let spacing = windowWidth * 0.07;
-    let x = slopeEnd.x - 200 - (maxMarbles - 1 - i) * spacing;
-    let y = floorY - 20;
-    slots[i].x = x;
-    slots[i].y = y;
+    slots[i].x = slopeEnd.x - 200 - (maxMarbles - 1 - i) * spacing;
+    slots[i].y = floorY - 20;
   }
 }
 
 function mousePressed() {
-  if (glowingMarble && dist(mouseX, mouseY, glowingMarble.x, glowingMarble.y) < glowingMarble.r * 1.3) {
-    isDragging = true;
-    offsetX = mouseX - glowingMarble.x;
-    offsetY = mouseY - glowingMarble.y;
+  if (glowingMarble) {
+    let finalScale = 1.3;
+    let clickableRadius = glowingMarble.r * finalScale;
+    
+    let d = dist(mouseX, mouseY, glowingMarble.x, glowingMarble.y);
+    
+    if (d < clickableRadius / 2) {
+      isDragging = true;
+      offsetX = mouseX - glowingMarble.x;
+      offsetY = mouseY - glowingMarble.y;
+    }
   }
 }
 
 function mouseDragged() {
-  if (isDragging && glowingMarble) {
+  if (isDragging) {
     glowingMarble.x = mouseX - offsetX;
     glowingMarble.y = mouseY - offsetY;
   }
@@ -237,9 +264,29 @@ function mouseReleased() {
   if (isDragging) {
     isDragging = false;
 
-    // 특정 사각형 영역 (300,200,250,550) 안에 들어오면 third.html로 이동
-    if (glowingMarble.x > 300 && glowingMarble.x < 300 + 250 &&
-      glowingMarble.y > 200 && glowingMarble.y < 200 + 550) {
+    // 1200x800 기준의 사각형 범위
+    const refWidth = 1200;
+    const refHeight = 800;
+    const targetX_ref = 300;
+    const targetY_ref = 200;
+    const targetW_ref = 250;
+    const targetH_ref = 550;
+
+    // 현재 캔버스 크기에 맞춰 범위 스케일 조정
+    const scaleX = width / refWidth;
+    const scaleY = height / refHeight;
+
+    const targetX_scaled = targetX_ref * scaleX;
+    const targetY_scaled = targetY_ref * scaleY;
+    const targetW_scaled = targetW_ref * scaleX;
+    const targetH_scaled = targetH_ref * scaleY;
+
+    // 구슬의 중심이 범위 안에 있는지 확인
+    if (glowingMarble.x > targetX_scaled && 
+        glowingMarble.x < targetX_scaled + targetW_scaled &&
+        glowingMarble.y > targetY_scaled &&
+        glowingMarble.y < targetY_scaled + targetH_scaled) {
+
       window.location.href = 'third.html';
     }
   }
