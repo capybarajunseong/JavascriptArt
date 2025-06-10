@@ -2,7 +2,7 @@ function setup() {
   console.log('setup() 실행됨');
   createCanvas(windowWidth, windowHeight);
   textAlign(LEFT, CENTER);
-  textSize(24); // 텍스트 크기
+  textSize(35); // 텍스트 크기
 }
 
 function draw() {
@@ -10,9 +10,28 @@ function draw() {
   // 파스텔톤 빨간색 그라데이션 배경
   setGradient(0, 0, width, height, color('#FFB3B3'), color('#FFD1D1'));
 
+  // 베이지색 모서리가 둥근 네모 그리기
+  noStroke();
+  fill(255, 255, 242, 240); // 투명도는 240으로 유지
+  let rectWidth = width * 0.8; // 가로 길이를 0.85에서 0.8로 줄임
+  let rectHeight = height * 0.7; // 세로 길이는 유지
+  let rectX = width * 0.5 - rectWidth * 0.5; // 가운데 정렬
+  let rectY = height * 0.5 - rectHeight * 0.5; // 가운데 정렬
+  let borderRadius = 40; // 둥근 모서리 반지름
+
+  rect(rectX, rectY, rectWidth, rectHeight, borderRadius);
+
+  // 폰트 적용
+  textFont('Gowun Batang'); // '고운 바탕' 폰트 적용
+
   // 텍스트 표시
-  fill(0); // 텍스트 색상 검은색
-  text("배경 그림 및 주인공 : 그림을 직접 그린 후 gpt로 수정 및 보완\n코드: cusor 안의 ai 사용\n\nai 사용 비율 90%", width * 0.1, height / 2);
+  fill(70, 70, 70, 230);
+  textSize(45); // 제목 크기 조정
+  textAlign(CENTER, CENTER); // 제목 중앙 정렬
+  text("AI 사용", width * 0.5, height * 0.15 + 40); // 제목 위치 조정
+  textAlign(LEFT, CENTER); // 본문 텍스트 정렬
+  textSize(35); // 본문 텍스트 크기
+  text("배경 그림 및 주인공 : 그림을 직접 그린 후 gpt로 수정 및 보완\n코드: cusor 안의 ai 사용\n\nai 사용 비율 90%", rectX + 40, rectY + rectHeight / 2); // 텍스트 위치 조정
 
   // X 버튼 그리기
   drawXButton();
