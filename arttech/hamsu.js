@@ -10,6 +10,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  textFont('Gowun Batang'); // '고운 바탕' 폰트 적용
   textAlign(CENTER, CENTER);
 }
 
@@ -27,9 +28,6 @@ function draw() {
   let borderRadius = 40; // 둥근 모서리 반지름
 
   rect(rectX, rectY, rectWidth, rectHeight, borderRadius);
-
-  // 폰트 적용
-  textFont('Gowun Batang'); // '고운 바탕' 폰트 적용
 
   // 제목 텍스트 (가운데 정렬 유지)
   textSize(45);
@@ -59,12 +57,12 @@ function draw() {
   textAlign(LEFT, TOP); // 왼쪽 상단 정렬
   textSize(25); // "주요 함수" 제목 크기
   fill(70, 70, 70, 230);
-  text("주요 함수", textX, height * 0.55); // "주요 함수" 제목 위치
+  text("주요 함수", textX, height * 0.52); // "주요 함수" 제목 위치
 
   textSize(18); // 본문 텍스트 크기
   let functionsText = `
 let scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, 8)
-— 현재 진행도를 총 지속시간 범위에서 1에서 8 사이의 값으로 변환하여 구슬이 자연스럽게 8배까지 확대되는 효과 구현.실제 물체가 커지는 것처럼 자연스러운 애니메이션을 구현.
+— 현재 진행도를 총 지속시간 범위에서 1에서 8 사이의 값으로 변환하여 구슬이 자연스럽게 8배까지 확대되는 효과 구현.
 
 dist(mouseX, mouseY, prevMouseX, prevMouseY)
 — 현재 마우스 위치와 방금 전 마우스 위치를 통해 얼마나 움직였는지를 계산하여 미세한 떨림에는 반응하지 않고 진짜 문지르는 것처럼 구현.
@@ -75,7 +73,7 @@ keyIsDown()
   
   let functionLines = functionsText.trim().split('\n'); // 앞뒤 공백 제거 후 줄바꿈 기준으로 분리
   let functionLineHeight = 25; // 함수 설명 줄 높이
-  let functionStartY = height * 0.59; // "주요 함수" 내용 시작 Y 위치
+  let functionStartY = height * 0.58; // "주요 함수" 내용 시작 Y 위치
 
   for (let i = 0; i < functionLines.length; i++) {
     text(functionLines[i], textX, functionStartY + (i * functionLineHeight)); // X 위치 조정

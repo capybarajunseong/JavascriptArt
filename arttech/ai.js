@@ -1,6 +1,7 @@
 function setup() {
   console.log('setup() 실행됨');
   createCanvas(windowWidth, windowHeight);
+  textFont('Gowun Batang'); // '고운 바탕' 폰트 적용
   textAlign(LEFT, CENTER);
   textSize(35); // 텍스트 크기
 }
@@ -21,17 +22,14 @@ function draw() {
 
   rect(rectX, rectY, rectWidth, rectHeight, borderRadius);
 
-  // 폰트 적용
-  textFont('Gowun Batang'); // '고운 바탕' 폰트 적용
-
   // 텍스트 표시
   fill(70, 70, 70, 230);
   textSize(45); // 제목 크기 조정
   textAlign(CENTER, CENTER); // 제목 중앙 정렬
-  text("AI 사용", width * 0.5, height * 0.15 + 40); // 제목 위치 조정
+  text("\nAI 사용", width * 0.5, height * 0.15 + 40); // 제목 위치 조정
   textAlign(LEFT, CENTER); // 본문 텍스트 정렬
   textSize(35); // 본문 텍스트 크기
-  text("배경 그림 및 주인공 : 그림을 직접 그린 후 gpt로 수정 및 보완\n코드: cusor 안의 ai 사용\n\nai 사용 비율 90%", rectX + 40, rectY + rectHeight / 2); // 텍스트 위치 조정
+  text("\n배경 그림 및 주인공 : 그림을 직접 그린 후 gpt로 수정 및 보완\n코드: cusor ai 사용\n\nai 사용 비율 80%", rectX + 40, rectY + rectHeight / 2); // 텍스트 위치 조정
 
   // X 버튼 그리기
   drawXButton();
