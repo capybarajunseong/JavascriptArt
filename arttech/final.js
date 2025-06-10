@@ -6,44 +6,67 @@ let backgroundImage;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
+  textAlign(CENTER, CENTER);
 
   // 구슬 초기화
   marbles = [
     {
-      x: width * 0.3,
+      x: width * 0.2,
       y: height * 0.5,
-      r: 40,
+      r: 250,
       color: pastelColors[1], // 하늘색
-      rotation: 0
+      rotation: 0,
+      text: "소감"
     },
     {
       x: width * 0.5,
       y: height * 0.5,
-      r: 40,
+      r: 250,
       color: pastelColors[2], // 노란색
-      rotation: 0
+      rotation: 0,
+      text: "함수 및 문법"
     },
     {
-      x: width * 0.7,
+      x: width * 0.8,
       y: height * 0.5,
-      r: 40,
+      r: 250,
       color: pastelColors[0], // 빨간색
-      rotation: 0
+      rotation: 0,
+      text: "AI 사용"
     }
   ];
 }
 
 function draw() {
-  // 배경 이미지 그리기
-  if (backgroundImage) {
-    image(backgroundImage, 0, 0, width, height);
-  } else {
-    background(245); // 기본 파스텔 배경색
-  }
-
+  // 파스텔 그라데이션 배경
+  setGradientBackground();
+  
+  // Ending Credits 텍스트
+  textSize(60);
+  fill(255, 255, 255, 200); // 반투명 흰색
+  text("Ending Credits", width * 0.5, height * 0.15);
+  
   // 구슬 그리기
   for (let marble of marbles) {
     drawMarble(marble);
+    // 구슬 아래 텍스트
+    textSize(40);
+    fill(255, 255, 255, 200); // 반투명 흰색
+    text(marble.text, marble.x, marble.y + marble.r - 30);
+  }
+}
+
+function setGradientBackground() {
+  // 파스텔 그라데이션 색상
+  let c1 = color(255, 182, 193); // 파스텔 핑크
+  let c2 = color(216, 191, 216); // 파스텔 보라색
+  
+  // 수직 그라데이션
+  for(let y = 0; y < height; y++) {
+    let inter = map(y, 0, height, 0, 1);
+    let c = lerpColor(c1, c2, inter);
+    stroke(c);
+    line(0, y, width, y);
   }
 }
 
