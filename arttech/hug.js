@@ -8,7 +8,7 @@ let lastHeartTime = 0; // 마지막 하트 생성 시간
 let heartInterval = 500; // 하트 생성 간격 (밀리초)
 let leftHeartsCount = 0; // 생성된 왼쪽 하트 개수
 let rightHeartsCount = 0; // 생성된 오른쪽 하트 개수
-const MAX_HEARTS_SIDE = 5; // 한쪽 영역에 생성될 최대 하트 개수
+const MAX_HEARTS_SIDE = 4; // 한쪽 영역에 생성될 최대 하트 개수 (5개에서 3개로 변경)
 
 function preload() {
   // 여기에 실제 이미지 파일 경로를 넣어주세요. (예: 'character.png')

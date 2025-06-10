@@ -246,7 +246,7 @@ function draw() {
     textAlign(CENTER);
     textSize(25); // 폰트 크기 조정
     fill(0); // 검은색 텍스트
-    text("어? 재가 많이 쌓였네. 저 빛나는 구슬은 뭐지?", width/2, height * 0.15); // 중앙 상단
+    text("어? 재가 많이 쌓였네. 저 빛나는 구슬은 뭐지? \n\n 닦아봐야겠다!", width/2, height * 0.15); // 중앙 상단
   }
 }
 
