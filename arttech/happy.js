@@ -1,12 +1,10 @@
 let yellowImage;
-let imageDisplayTime = 2000; // 이미지 표시 시간 (2초)
-let startTime;
-// let closeButtonImage; // 닫기 버튼 이미지 변수 제거
+// let imageDisplayTime = 2000; // 이미지 표시 시간 (2초) 제거
+// let startTime; // 시작 시간 변수 제거
 
 function preload() {
   yellowImage = loadImage('../image/yellow.jpg'); // Load the yellow.jpg image
-  // closeButtonImage = loadImage('../image/close_button.png'); // 닫기 버튼 이미지 로드 코드 제거
-  startTime = millis();
+  // startTime = millis(); // 시작 시간 설정 제거
 }
 
 function setup() {
@@ -14,16 +12,11 @@ function setup() {
 }
 
 function draw() {
-  let currentTime = millis() - startTime;
+  // let currentTime = millis() - startTime; // 시간 체크 제거
   
-  // 이미지 표시 시간 동안만 이미지 표시
-  if (currentTime < imageDisplayTime) {
-    if (yellowImage) {
-      image(yellowImage, 0, 0, width, height); // Display the background image
-    }
-  } else {
-    // 이미지 표시 시간이 지나면 바로 다음 페이지로 이동
-    window.location.href = 'hppull.html';
+  // 이미지를 계속 표시
+  if (yellowImage) {
+    image(yellowImage, 0, 0, width, height); // Display the background image
   }
 
   // 닫기 버튼 그리기 (빨간색 원에 흰색 X)

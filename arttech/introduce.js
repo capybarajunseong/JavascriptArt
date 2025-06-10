@@ -22,7 +22,7 @@ function draw() {
     fill(100, 100, 100, fadeIn);
     textSize(min(windowWidth, windowHeight) * 0.05); // 화면 크기에 비례하여 텍스트 크기 설정
     textStyle(BOLD);
-    text("기쁜 나도, 슬픈 나도 괜찮아", 0, 0);
+    text("슬픔이 있어야 기쁨도 빛난다", 0, 0);
     pop();
     
     // 이름들
