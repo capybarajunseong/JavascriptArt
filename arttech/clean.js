@@ -101,8 +101,8 @@ function draw() {
     }
   }
 
-  // 0.5초 후에 이미지 전환
-  if (millis() - startTime > 800) {
+  // 0.4초 후에 이미지 전환 시작
+  if (millis() - startTime > 100) {
     if (currentImage === backgroundImage1) {
       // 페이드 아웃 효과
       fadeAlpha = max(0, fadeAlpha - 5);
@@ -114,8 +114,8 @@ function draw() {
     } else {
       // 페이드 인 효과
       fadeAlpha = min(255, fadeAlpha + 5);
-      // afterClean.png가 완전히 보이고 1초가 지나면 out.js로 이동
-      if (fadeAlpha === 255 && millis() - fadeStartTime >= 1000) {
+      // afterClean.png가 완전히 보이고 0.5초가 지나면 out.js로 이동
+      if (fadeAlpha === 255 && millis() - fadeStartTime >= 800) {
         window.location.href = 'out.html';
       }
     }
