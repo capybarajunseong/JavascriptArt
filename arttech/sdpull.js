@@ -22,6 +22,13 @@ let isEnlarging = false; // 애니메이션 없음
 let enlargeProgress = 30; // 완료 상태로 설정
 let enlargeDuration = 30;
 
+// 빛나는 효과를 위한 변수 추가
+let glowSize = 0;
+let glowDirection = 1;
+let messageAlpha = 0; // Add messageAlpha for text fade effect from hppull.js
+let messageDirection = 1; // Add messageDirection for text fade effect from hppull.js
+let showInitialMonologue = true; // New variable to control initial monologue visibility
+
 // 드래그 관련 변수 추가
 let isDragging = false;
 let offsetX = 0;
@@ -116,6 +123,9 @@ function draw() {
   if (isGlowing && glowingMarble) {
     drawEnlargedMarble();
   }
+
+  // 빛나는 효과 업데이트
+  updateGlowEffect(); // Call updateGlowEffect
 }
 
 function drawSlope() {
@@ -165,47 +175,63 @@ function drawEnlargedMarble() {
   if (!glowingMarble) return;
 
   push();
-  
-  // 구슬의 원래 위치로 이동
   translate(glowingMarble.x, glowingMarble.y);
+  rotate(glowingMarble.rotation);
   
-  // 항상 1.3배 크기로 고정
-  let scaleAmount = 1.3;
-  scale(scaleAmount);
+  // 항상 1.3배 크기로 고정 (직접 반지름에 곱하기)
+  let enlargedRadius = glowingMarble.r * 1.3; // Calculate the enlarged radius once
 
-  // 빛나는 효과 그리기
-  push();
-  let glowColor = color(glowingMarble.color);
-  
-  for (let i = 0; i < 5; i++) { 
-    let baseGlowSize = glowingMarble.r * 2;
-    let glowRingSize = baseGlowSize + (i * 10 / scaleAmount);
-    glowColor.setAlpha(map(i, 0, 4, 40, 0));
-    fill(glowColor);
-    ellipse(0, 0, glowRingSize, glowRingSize);
-  }
-  pop();
-
-  // 구슬 그림자
+  // 빛나는 효과 그리기 (hppull.js의 drawGlowingMarble에서 가져옴)
   noStroke();
+  for (let i = 3; i > 0; i--) {
+    let alpha = 100 - i * 30;
+    fill(255, 255, 200, alpha);
+    ellipse(0, 0, enlargedRadius * (1 + glowSize * 0.1) + i * 10);
+  }
+  
+  // 구슬 그림자
   fill(0, 0, 0, 30);
-  ellipse(2/scaleAmount, 2/scaleAmount, glowingMarble.r * 2, glowingMarble.r * 2);
-
+  ellipse(2, 2, enlargedRadius, enlargedRadius);
+  
   // 구슬 본체
   fill(glowingMarble.color);
-  ellipse(0, 0, glowingMarble.r * 2, glowingMarble.r * 2);
+  ellipse(0, 0, enlargedRadius, enlargedRadius);
   
   // 구슬 하이라이트
   fill(255, 255, 255, 100);
-  ellipse(-glowingMarble.r/4 / scaleAmount, -glowingMarble.r/4 / scaleAmount, glowingMarble.r/3 * 2, glowingMarble.r/3 * 2);
+  ellipse(-enlargedRadius/4, -enlargedRadius/4, enlargedRadius/3, enlargedRadius/3);
   
-  // 메시지 표시
+  // 메시지 그리기
   textAlign(CENTER, CENTER);
-  textSize(24 / scaleAmount);
-  fill(0);
-  text("구슬을 끌어당겨 주인공의 반응을 확인해보세요!", 0, glowingMarble.r * 2 / scaleAmount + 30 / scaleAmount);
+  textSize(20); // 폰트 크기
+
+  if (showInitialMonologue) {
+    fill(0); // 독백은 항상 검은색
+    text("어라 저 빛나는 구슬은 뭐지?", 0, -enlargedRadius - 50); // 구슬 위쪽에 배치
+  } else {
+    fill(0, messageAlpha); // 드래그 안내 메시지는 messageAlpha 적용
+    text("구슬을 끌어당겨 주인공의 반응을 확인해보세요!", 0, enlargedRadius * 1.5 + 30);
+  }
 
   pop();
+}
+
+function updateGlowEffect() {
+  // 빛나는 효과 업데이트
+  glowSize += 0.05 * glowDirection;
+  if (glowSize > 1) {
+    glowDirection = -1;
+  } else if (glowSize < 0) {
+    glowDirection = 1;
+  }
+
+  // 메시지 투명도 업데이트 (hppull.js에서 가져옴)
+  messageAlpha += 2 * messageDirection;
+  if (messageAlpha > 255) {
+    messageDirection = -1;
+  } else if (messageAlpha < 0) {
+    messageDirection = 1;
+  }
 }
 
 // 첫 번째 하늘색 구슬을 찾는 헬퍼 함수
@@ -257,6 +283,37 @@ function mouseDragged() {
   if (isDragging) {
     glowingMarble.x = mouseX - offsetX;
     glowingMarble.y = mouseY - offsetY;
+
+    // 드래그 시작 시 초기 독백 사라지게 함
+    if (showInitialMonologue) {
+      showInitialMonologue = false;
+    }
+
+    // 1200x800 기준의 사각형 범위
+    const refWidth = 1200;
+    const refHeight = 800;
+    const targetX_ref = 300;
+    const targetY_ref = 200;
+    const targetW_ref = 250;
+    const targetH_ref = 550;
+
+    // 현재 캔버스 크기에 맞춰 범위 스케일 조정
+    const scaleX = width / refWidth;
+    const scaleY = height / refHeight;
+
+    const targetX_scaled = targetX_ref * scaleX;
+    const targetY_scaled = targetY_ref * scaleY;
+    const targetW_scaled = targetW_ref * scaleX;
+    const targetH_scaled = targetH_ref * scaleY;
+
+    // 구슬의 중심이 범위 안에 있는지 확인
+    if (glowingMarble.x > targetX_scaled && 
+        glowingMarble.x < targetX_scaled + targetW_scaled &&
+        glowingMarble.y > targetY_scaled &&
+        glowingMarble.y < targetY_scaled + targetH_scaled) {
+
+      window.location.href = 'third.html';
+    }
   }
 }
 
