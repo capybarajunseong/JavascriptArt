@@ -106,8 +106,15 @@ function windowResized() {
 function mousePressed() {
   // 하늘색 구슬 (marbles[0]) 클릭 감지
   let blueMarble = marbles[0];
-  let d = dist(mouseX, mouseY, blueMarble.x, blueMarble.y);
-  if (d < blueMarble.r / 2) { // 구슬 반지름의 절반보다 작으면 클릭으로 간주
+  let dBlue = dist(mouseX, mouseY, blueMarble.x, blueMarble.y);
+  if (dBlue < blueMarble.r / 2) { // 구슬 반지름의 절반보다 작으면 클릭으로 간주
     window.location.href = 'feel1.html'; // feel1.html로 이동
+  }
+
+  // 노란색 구슬 (marbles[1]) 클릭 감지
+  let yellowMarble = marbles[1];
+  let dYellow = dist(mouseX, mouseY, yellowMarble.x, yellowMarble.y);
+  if (dYellow < yellowMarble.r / 2) {
+    window.location.href = 'hamsu.html'; // hamsu.html로 이동
   }
 }
