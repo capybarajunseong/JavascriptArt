@@ -11,7 +11,7 @@ function setup() {
   // 구슬 초기화
   marbles = [
     {
-      x: width * 0.2,
+      x: width * 0.18,
       y: height * 0.5,
       r: 250,
       color: pastelColors[1], // 하늘색
@@ -27,7 +27,7 @@ function setup() {
       text: "함수 및 문법"
     },
     {
-      x: width * 0.8,
+      x: width * 0.83,
       y: height * 0.5,
       r: 250,
       color: pastelColors[0], // 빨간색
@@ -101,4 +101,13 @@ function windowResized() {
   marbles[1].y = height * 0.5;
   marbles[2].x = width * 0.7;
   marbles[2].y = height * 0.5;
+}
+
+function mousePressed() {
+  // 하늘색 구슬 (marbles[0]) 클릭 감지
+  let blueMarble = marbles[0];
+  let d = dist(mouseX, mouseY, blueMarble.x, blueMarble.y);
+  if (d < blueMarble.r / 2) { // 구슬 반지름의 절반보다 작으면 클릭으로 간주
+    window.location.href = 'feel1.html'; // feel1.html로 이동
+  }
 }
