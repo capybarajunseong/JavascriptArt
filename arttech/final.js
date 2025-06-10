@@ -119,4 +119,11 @@ function mousePressed() {
     window.location.href = 'ai.html'; // ai.html로 이동
     return; // 다른 구슬 클릭 검사를 중단
   }
+
+  // 노란색 구슬 (marbles[1]) 클릭 감지
+  let yellowMarble = marbles[1];
+  let dYellow = dist(mouseX, mouseY, yellowMarble.x, yellowMarble.y);
+  if (dYellow < yellowMarble.r / 2) {
+    window.location.href = 'hamsu.html'; // hamsu.html로 이동
+  }
 }
