@@ -5,6 +5,9 @@ let smellImage;
 let smellImageLoaded = false;
 let smellX, smellY;
 let smellInitialPositionSet = false;
+let speechBubbleImage;
+let speechBubbleLoaded = false;
+let showSpeechBubble = true;
 // let smokeOverlayImage; // smokking.png 관련 변수 주석 처리
 // let smokeImageLoaded = false; // smokking.png 로드 여부 변수는 필요 없으므로 유지할 필요 없음
 
@@ -30,6 +33,9 @@ function preload() {
   });
   smellImage = loadImage('../image/smell.png', () => {
     smellImageLoaded = true;
+  });
+  speechBubbleImage = loadImage('../image/mal.png', () => {
+    speechBubbleLoaded = true;
   });
   // smokeOverlayImage = loadImage('../image/smokking.png', () => { // smokking.png 로드 주석 처리
   //   smokeImageLoaded = true;
@@ -106,6 +112,23 @@ function draw() {
 
   if (smellImageLoaded) {
     image(smellImage, smellX, smellY, smellImage.width * 0.6, smellImage.height * 0.6); // Increased size
+  }
+
+  // Draw speech bubble and text
+  if (speechBubbleLoaded && showSpeechBubble) {
+    let speechBubbleWidth = speechBubbleImage.width * 0.6; // Increased size
+    let speechBubbleHeight = speechBubbleImage.height * 0.6; // Increased size
+    let speechBubbleX = smellX + (smellImage.width * 0.6 / 2) - (speechBubbleWidth / 2) + 100; // Center above smell.png and move further right
+    let speechBubbleY = smellY - speechBubbleHeight + 10; // Position above smell.png
+
+    image(speechBubbleImage, speechBubbleX, speechBubbleY, speechBubbleWidth, speechBubbleHeight);
+
+    // Draw text inside the speech bubble
+    fill(0); // Text color black
+    textSize(20); // Adjust text size as needed
+    textAlign(CENTER, CENTER);
+    text("이게 무슨 연기지?", speechBubbleX + speechBubbleWidth / 2, speechBubbleY + speechBubbleHeight / 2 - 20);
+    text("따라가봐야겠다", speechBubbleX + speechBubbleWidth / 2, speechBubbleY + speechBubbleHeight / 2 + 15);
   }
 
   let moveAmount = 5; // Adjust movement speed for continuous movement
@@ -190,12 +213,16 @@ function keyPressed() {
 
   if (keyCode === LEFT_ARROW) {
     isLeftPressed = true;
+    showSpeechBubble = false;
   } else if (keyCode === RIGHT_ARROW) {
     isRightPressed = true;
+    showSpeechBubble = false;
   } else if (keyCode === UP_ARROW) {
     isUpPressed = true;
+    showSpeechBubble = false;
   } else if (keyCode === DOWN_ARROW) {
     isDownPressed = true;
+    showSpeechBubble = false;
   }
 }
 

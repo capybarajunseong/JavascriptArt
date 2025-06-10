@@ -75,6 +75,21 @@ function setup() {
     RollInMarbles();
   });
 
+  // Customize button style
+  startButton.style('background-color', '#FFDAB9'); // 파스텔 피치 색상
+  startButton.style('color', '#8B4513'); // 진한 갈색 텍스트
+  startButton.style('font-family', 'Arial, sans-serif'); // 폰트 변경 (둥근 느낌의 폰트가 설치되어 있다면 그 폰트 이름으로 변경 가능)
+  startButton.style('font-size', '28px'); // 폰트 크기 증가
+  startButton.style('padding', '20px 40px'); // 버튼 패딩 증가 (크기 증가)
+  startButton.style('border-radius', '30px'); // 둥근 모서리
+  startButton.style('border', 'none'); // 테두리 제거
+  startButton.style('cursor', 'pointer'); // 마우스 오버 시 포인터 변경
+  startButton.style('box-shadow', '3px 3px 5px rgba(0,0,0,0.2)'); // 그림자 효과
+  startButton.style('transition', 'all 0.3s ease'); // 부드러운 전환 효과
+  
+  // Add hover effect (optional, P5.js doesn't directly support :hover, but can be done with mouseX/Y or by adding a CSS class)
+  // For simplicity, we'll just apply the base style here. For hover, custom CSS would be better.
+
   // 캐릭터 위치 설정
   faceX = width/2;
   faceY = height/2;
