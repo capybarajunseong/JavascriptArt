@@ -16,7 +16,7 @@ function setup() {
   // 3초 후에 smoke.html로 이동
   setTimeout(() => {
     window.location.href = 'smoke.html';
-  }, 1000); // 3000 밀리초 = 3초
+  }, 3000); // 2000 밀리초에서 3000 밀리초 = 3초로 변경
 }
 
 function draw() {

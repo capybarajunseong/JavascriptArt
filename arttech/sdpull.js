@@ -174,18 +174,19 @@ function drawMarble(marble) {
 function drawEnlargedMarble() {
   if (!glowingMarble) return;
 
+  // 구슬 그리기
   push();
   translate(glowingMarble.x, glowingMarble.y);
-  rotate(glowingMarble.rotation);
+  rotate(glowingMarble.rotation); // 구슬은 회전
   
-  // 항상 1.3배 크기로 고정 (직접 반지름에 곱하기)
-  let enlargedRadius = glowingMarble.r * 1.3; // Calculate the enlarged radius once
+  // 항상 1.5배 크기로 고정 (1.3에서 1.5로 증가)
+  let enlargedRadius = glowingMarble.r * 1.5; // Calculate the enlarged radius once
 
-  // 빛나는 효과 그리기 (hppull.js의 drawGlowingMarble에서 가져옴)
+  // 빛나는 효과 그리기 (하늘색으로 변경)
   noStroke();
   for (let i = 3; i > 0; i--) {
     let alpha = 100 - i * 30;
-    fill(255, 255, 200, alpha);
+    fill(173, 216, 230, alpha); // 하늘색으로 변경 (lightblue)
     ellipse(0, 0, enlargedRadius * (1 + glowSize * 0.1) + i * 10);
   }
   
@@ -200,8 +201,11 @@ function drawEnlargedMarble() {
   // 구슬 하이라이트
   fill(255, 255, 255, 100);
   ellipse(-enlargedRadius/4, -enlargedRadius/4, enlargedRadius/3, enlargedRadius/3);
-  
-  // 메시지 그리기
+  pop();
+
+  // 글씨는 별도로 그리기 (회전 없이)
+  push();
+  translate(glowingMarble.x, glowingMarble.y);
   textAlign(CENTER, CENTER);
   textSize(20); // 폰트 크기
 
@@ -212,7 +216,6 @@ function drawEnlargedMarble() {
     fill(0, messageAlpha); // 드래그 안내 메시지는 messageAlpha 적용
     text("구슬을 끌어당겨 주인공의 반응을 확인해보세요!", 0, enlargedRadius * 1.5 + 30);
   }
-
   pop();
 }
 

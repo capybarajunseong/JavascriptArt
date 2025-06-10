@@ -22,11 +22,12 @@ let naalimImg;
 let showTransitionImages = false; // 전환 이미지를 표시할지 여부
 let transitionImageIndex = 0; // 0: 없음, 1: sadness.png, 2: naalim.jpg
 let transitionStartTime = 0; // 이미지 표시 시작 시간
-const sadnessImageDuration = 1000; // sadness.png 표시 시간 (1초)
-const naalimImageDuration = 1000; // naalim.jpg 표시 시간 (1초)
+const sadnessImageDuration = 1900; // sadness.png 표시 시간 (1.6초 -> 1.9초)
+const naalimImageDuration = 1900; // naalim.jpg 표시 시간 (1.6초 -> 1.9초)
 let isTransitionTriggered = false; // 전환 시퀀스 트리거 여부
 
-const messageDisplayDuration = 1000; // '재 닦기 완료' 메시지 표시 시간 (1초)
+const messageDisplayDuration = 1900; // '재 닦기 완료' 메시지 표시 시간 (1.6초 -> 1.9초)
+let showInitialMonologue = true; // 초기 독백 표시 여부
 
 function preload() {
   backgroundImage = loadImage('../image/inFire.jpg', 
@@ -239,6 +240,14 @@ function draw() {
     fill(100);
     text("재 닦기 완료", width/2, height - 30);
   }
+
+  // 초기 독백 표시
+  if (showInitialMonologue) {
+    textAlign(CENTER);
+    textSize(25); // 폰트 크기 조정
+    fill(0); // 검은색 텍스트
+    text("어? 재가 많이 쌓였네. 저 빛나는 구슬은 뭐지?", width/2, height * 0.15); // 중앙 상단
+  }
 }
 
 function drawMarble(x, y, r, c) {
@@ -329,6 +338,7 @@ function mousePressed() {
         isCentered = true; // isCentered 다시 설정
         rubbingCount = 0;
         lastRubbingTime = millis();
+        showInitialMonologue = false; // 구슬 클릭 시 초기 독백 숨김
       } else { // 이미 중앙에 있는 경우: 문지르기 모드 유지 (재클릭 시 구슬 위치는 고정)
         draggedMarble = pos; // 드래그 대상 구슬로 설정 (손 모양을 위해)
         // isCentered가 true이므로, 구슬은 이미 중앙에 있습니다.
