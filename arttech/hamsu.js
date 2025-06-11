@@ -39,7 +39,7 @@ function draw() {
   textAlign(LEFT, TOP); // 왼쪽 상단 정렬
   textSize(22);
   fill(70, 70, 70, 230); // 어두운 회색으로 변경
-  let message = "java script\n- 배열, 반복, 조건문 등 (for, if)\n\np5.js\n- preload(), setup(), draw(), mousePressed() 등의 마우스와 키보드 이벤트, dist() 수학함수 등";
+  let message = "java script\n- 배열, 반복, 조건문 등 (for, if)\n\np5.js\n- preload(), setup(), draw() 등의 마우스와 키보드 이벤트, dist() 수학함수 등";
   
   // 텍스트를 여러 줄로 나누어 표시
   let lines = message.split('\n');
@@ -61,10 +61,10 @@ function draw() {
 
   textSize(18); // 본문 텍스트 크기
   let functionsText = `
-let scaleAmount = map(enlargeProgress, 0, enlargeDuration, 1, 8)
-— 현재 진행도를 총 지속시간 범위에서 1에서 8 사이의 값으로 변환하여 구슬이 자연스럽게 8배까지 확대되는 효과 구현.
+mousePressed()
+— 구슬 클릭 시 확대 애니메이션 시작 및 추억 페이지로 전환하는 기능을 구현.
 
-dist(mouseX, mouseY, prevMouseX, prevMouseY)
+dist()
 — 현재 마우스 위치와 방금 전 마우스 위치를 통해 얼마나 움직였는지를 계산하여 미세한 떨림에는 반응하지 않고 진짜 문지르는 것처럼 구현.
 
 keyIsDown()
